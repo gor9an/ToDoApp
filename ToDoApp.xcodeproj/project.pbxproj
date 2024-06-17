@@ -11,6 +11,8 @@
 		B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A012C209DDB000F93B4 /* ContentView.swift */; };
 		B0561A042C209DDF000F93B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0561A032C209DDF000F93B4 /* Assets.xcassets */; };
 		B0561A072C209DDF000F93B4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0561A062C209DDF000F93B4 /* Preview Assets.xcassets */; };
+		B0561A112C209E6F000F93B4 /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A102C209E6F000F93B4 /* FileCache.swift */; };
+		B0561A132C209EA0000F93B4 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A122C209EA0000F93B4 /* TodoItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		B0561A012C209DDB000F93B4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B0561A032C209DDF000F93B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B0561A062C209DDF000F93B4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B0561A102C209E6F000F93B4 /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
+		B0561A122C209EA0000F93B4 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,10 +55,11 @@
 		B05619FE2C209DDB000F93B4 /* ToDoApp */ = {
 			isa = PBXGroup;
 			children = (
+				B0561A0E2C209E4D000F93B4 /* Service */,
+				B0561A0F2C209E57000F93B4 /* Models */,
 				B05619FF2C209DDB000F93B4 /* ToDoAppApp.swift */,
 				B0561A012C209DDB000F93B4 /* ContentView.swift */,
-				B0561A032C209DDF000F93B4 /* Assets.xcassets */,
-				B0561A052C209DDF000F93B4 /* Preview Content */,
+				B0561A0D2C209E28000F93B4 /* Resources */,
 			);
 			path = ToDoApp;
 			sourceTree = "<group>";
@@ -65,6 +70,31 @@
 				B0561A062C209DDF000F93B4 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B0561A0D2C209E28000F93B4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B0561A032C209DDF000F93B4 /* Assets.xcassets */,
+				B0561A052C209DDF000F93B4 /* Preview Content */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B0561A0E2C209E4D000F93B4 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				B0561A102C209E6F000F93B4 /* FileCache.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		B0561A0F2C209E57000F93B4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B0561A122C209EA0000F93B4 /* TodoItem.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,6 +168,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */,
+				B0561A112C209E6F000F93B4 /* FileCache.swift in Sources */,
+				B0561A132C209EA0000F93B4 /* TodoItem.swift in Sources */,
 				B0561A002C209DDB000F93B4 /* ToDoAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -271,7 +303,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ToDoApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ToDoApp/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = ZA635WC7L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -300,7 +332,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ToDoApp/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ToDoApp/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = ZA635WC7L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
