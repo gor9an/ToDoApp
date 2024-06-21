@@ -8,7 +8,7 @@
 import Foundation
 
 struct TodoItem {
-//    MARK: Properies
+    // MARK: Properties
     let id: String?
     let text: String
     let importance: Importance
@@ -17,7 +17,7 @@ struct TodoItem {
     let dateOfCreation: Date
     let dateOfChange: Date?
     
-//    MARK: Init
+    // MARK: Init
     init(
         id: String?,
         text: String,
@@ -41,7 +41,7 @@ struct TodoItem {
         self.dateOfChange = dateOfChange
     }
     
-//    MARK: Importance enum
+    // MARK: Importance enum
     enum Importance {
         case unimportant
         case usual

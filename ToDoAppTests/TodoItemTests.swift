@@ -36,7 +36,7 @@ final class TodoItemTests: XCTestCase {
         let jsonDeadline = formatter.date(from: json?["deadline"] ?? "") ?? nil
         let jsonDateOfCreation = formatter.date(from: json?["dateOfCreation"] ?? "") ?? nil
         let jsonDateOfChange = formatter.date(from: json?["dateOfChange"] ?? "") ?? nil
-
+        
         //then
         XCTAssertEqual(json?["id"], todoItem.id)
         XCTAssertEqual(json?["text"], todoItem.text)
@@ -73,7 +73,7 @@ final class TodoItemTests: XCTestCase {
             XCTAssertFalse(json == nil)
             return
         }
-
+        
         //then
         XCTAssertEqual(json.id, todoItem.id)
         XCTAssertEqual(json.text, todoItem.text)

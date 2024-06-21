@@ -8,11 +8,11 @@
 import Foundation
 
 final class FileCache {
-//    MARK: Properties
+    // MARK: Properties
     private(set) var todoItems: [TodoItem]?
     private let fileManager = FileManager.default
     
-//    MARK: Functions
+    // MARK: Functions
     func addNewTask(_ toDoItem: TodoItem) {
         if todoItems == nil {
             todoItems = [TodoItem]()
@@ -32,8 +32,6 @@ final class FileCache {
         todoItems?.removeAll(where: { $0.id == id })
     }
     
-//  guard let json = json as? Data else { return nil }
-//
     func fetchTodoItems(from fileName: String?) {
         guard let sourcePath = getSourcePath(with: fileName) else {
             return
@@ -49,7 +47,7 @@ final class FileCache {
                 }
                 
                 for items in dictionary {
-                    guard let item = TodoItem.parse(json: items) else { 
+                    guard let item = TodoItem.parse(json: items) else {
                         assertionFailure("fetchTodoItems() - parse error")
                         return
                     }
@@ -82,7 +80,7 @@ final class FileCache {
         }
     }
     
-//    MARK: Private Functions
+    // MARK: Private Functions
     private func getSourcePath(with fileName: String?) -> URL? {
         guard var sourcePath = fileManager.urls(
             for: .documentDirectory,
