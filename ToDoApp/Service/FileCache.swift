@@ -37,20 +37,20 @@ final class FileCache {
                 let jsons = try Data(contentsOf: sourcePath, options: .mappedIfSafe)
                 
                 guard let dictionary = try JSONSerialization.jsonObject(with: jsons) as? [Dictionary<String, Any>] else {
-                    assertionFailure("fetchTodoItems() dictionary creation error")
+                    print("fetchTodoItems() dictionary creation error")
                     return
                 }
                 
                 for items in dictionary {
                     guard let item = TodoItem.parse(json: items) else {
-                        assertionFailure("fetchTodoItems() - parse error")
+                        print("fetchTodoItems() - parse error")
                         return
                     }
                     addNewTask(item)
                 }
                 
             } catch {
-                assertionFailure("fetchTodoItems() - \(error.localizedDescription)")
+                print("fetchTodoItems() - \(error.localizedDescription)")
             }
         } else {
             print("fetchTodoItems() - not exist")
@@ -66,7 +66,7 @@ final class FileCache {
             let json = try JSONSerialization.data(withJSONObject: todoItemsJsons)
             try json.write(to: sourcePath, options: [])
         } catch {
-            assertionFailure("saveTodoItems(to fileName: String?) - error writing to the file: \(error.localizedDescription)")
+            print("saveTodoItems(to fileName: String?) - error writing to the file: \(error.localizedDescription)")
             return
         }
     }
@@ -99,7 +99,7 @@ final class FileCache {
         
         
         sourcePath.append(path: fileName)
-
+        
         return sourcePath
     }
 }
