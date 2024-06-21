@@ -37,7 +37,7 @@ final class FileCacheTests: XCTestCase {
         cache.addNewTask(secondToDoItem)
         
         //then
-        XCTAssertTrue(cache.todoItems?.count == 2)
+        XCTAssertTrue(cache.todoItems.count == 2)
     }
     
     func testDelTask() {
@@ -55,10 +55,10 @@ final class FileCacheTests: XCTestCase {
         
         //when
         cache.addNewTask(toDoItem)
-        cache.delTask(id: toDoItem.id!)
+        cache.delTask(id: toDoItem.id)
         
         //then
-        XCTAssertTrue(cache.todoItems?.count == 0)
+        XCTAssertTrue(cache.todoItems.count == 0)
     }
     
     func testFileManager() throws {
@@ -88,12 +88,12 @@ final class FileCacheTests: XCTestCase {
         cache.addNewTask(secondToDoItem)
         cache.saveTodoItems(to: "new.json")
         
-        cache.delTask(id: firstToDoItem.id!)
-        cache.delTask(id: secondToDoItem.id!)
-        XCTAssertTrue(cache.todoItems?.count == 0)
+        cache.delTask(id: firstToDoItem.id)
+        cache.delTask(id: secondToDoItem.id)
+        XCTAssertTrue(cache.todoItems.count == 0)
         cache.fetchTodoItems(from: "new.json")
         
         //then
-        XCTAssertTrue(cache.todoItems?.count == 2)
+        XCTAssertTrue(cache.todoItems.count == 2)
     }
 }
