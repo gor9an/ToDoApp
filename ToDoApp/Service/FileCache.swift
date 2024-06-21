@@ -9,30 +9,25 @@ import Foundation
 
 final class FileCache {
     // MARK: Properties
-    private(set) var todoItems: [TodoItem]?
+    private(set) var todoItems = [String: TodoItem]()
     private let fileManager = FileManager.default
+    private var path: URL?
     
     // MARK: Functions
     func addNewTask(_ toDoItem: TodoItem) {
-        if todoItems == nil {
-            todoItems = [TodoItem]()
+        if todoItems[toDoItem.id] != nil {
+            print("id duplicate")
+            return
+            
         }
-        
-        todoItems?.forEach { item in
-            if item.id == toDoItem.id {
-                assertionFailure("id duplicate")
-                return
-            }
-        }
-        
-        todoItems?.append(toDoItem)
+        todoItems[toDoItem.id] = toDoItem
     }
     
     func delTask(id: String) {
-        todoItems?.removeAll(where: { $0.id == id })
+        todoItems[id] = nil
     }
     
-    func fetchTodoItems(from fileName: String?) {
+    func fetchTodoItems(from fileName: String = "default.json") {
         guard let sourcePath = getSourcePath(with: fileName) else {
             return
         }
@@ -41,7 +36,7 @@ final class FileCache {
             do {
                 let jsons = try Data(contentsOf: sourcePath, options: .mappedIfSafe)
                 
-                guard let dictionary = try JSONSerialization.jsonObject(with: jsons) as? [Dictionary<String, String>] else {
+                guard let dictionary = try JSONSerialization.jsonObject(with: jsons) as? [Dictionary<String, Any>] else {
                     assertionFailure("fetchTodoItems() dictionary creation error")
                     return
                 }
@@ -62,14 +57,10 @@ final class FileCache {
         }
     }
     
-    func saveTodoItems(to fileName: String?) {
-        guard let todoItems else {
-            print("saveTodoItems(to fileName: String?) - todoItems is empty")
-            return
-        }
+    func saveTodoItems(to fileName: String = "default.json") {
         guard let sourcePath = getSourcePath(with: fileName) else { return }
         
-        let todoItemsJsons = todoItems.map { $0.json }
+        let todoItemsJsons = todoItems.compactMap { $0.value.json }
         
         do {
             let json = try JSONSerialization.data(withJSONObject: todoItemsJsons)
@@ -81,33 +72,34 @@ final class FileCache {
     }
     
     // MARK: Private Functions
-    private func getSourcePath(with fileName: String?) -> URL? {
-        guard var sourcePath = fileManager.urls(
+    private func createSourcePath() {
+        guard var documents = fileManager.urls(
             for: .documentDirectory,
             in: .userDomainMask
         ).first else {
-            assertionFailure("getSourcePath(with fileName: String?) - error creating the source path")
-            return nil
+            print("getSourcePath(with fileName: String?) - error creating the source path")
+            return
+        }
+        documents.append(path: "JsonStorage")
+        
+        do {
+            try fileManager.createDirectory(
+                at: documents,
+                withIntermediateDirectories: true)
+        } catch {
+            print("getSourcePath(with fileName: String?) - error creating the JsonStorage dir: \(error.localizedDescription)")
         }
         
-        sourcePath.append(path: "JsonStorage")
+        path = documents
+    }
+    
+    private func getSourcePath(with fileName: String = "default.json") -> URL? {
+        if path == nil { createSourcePath() }
+        guard var sourcePath = path else { return nil }
         
-        if !sourcePath.hasDirectoryPath {
-            do {
-                try fileManager.createDirectory(
-                    at: sourcePath,
-                    withIntermediateDirectories: true)
-            } catch {
-                assertionFailure("getSourcePath(with fileName: String?) - error creating the JsonStorage dir: \(error.localizedDescription)")
-            }
-        }
         
-        if let fileName {
-            sourcePath.append(path: fileName)
-        } else {
-            sourcePath.append(path: "default.json")
-        }
-        
+        sourcePath.append(path: fileName)
+
         return sourcePath
     }
 }
