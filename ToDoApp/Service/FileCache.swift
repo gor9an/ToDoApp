@@ -23,8 +23,8 @@ final class FileCache {
         todoItems[toDoItem.id] = toDoItem
     }
     
-    func delTask(id: String) {
-        todoItems[id] = nil
+    func delTask(id: String) -> TodoItem? {
+        return todoItems.removeValue(forKey: id)
     }
     
     func fetchTodoItems(from fileName: String = "default.json") {

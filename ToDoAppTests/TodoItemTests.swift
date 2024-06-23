@@ -14,7 +14,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .important,
             deadline: someDate,
@@ -68,7 +68,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let dateOfCreationItem = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .usual,
             deadline: nil,
@@ -122,7 +122,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .important,
             deadline: someDate,
@@ -162,7 +162,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .usual,
             deadline: nil,
@@ -203,7 +203,7 @@ final class TodoItemTests: XCTestCase {
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItems = [
             TodoItem(
-                id: nil,
+                id: UUID().uuidString,
                 text: "text",
                 importance: .important,
                 deadline: someDate,
@@ -231,7 +231,7 @@ final class TodoItemTests: XCTestCase {
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItems = [
             TodoItem(
-                id: nil,
+                id: UUID().uuidString,
                 text: "text",
                 importance: .usual,
                 deadline: nil,
@@ -259,7 +259,7 @@ final class TodoItemTests: XCTestCase {
         let soneDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItems = [
             TodoItem(
-                id: nil,
+                id: UUID().uuidString,
                 text: "text",
                 importance: .unimportant,
                 deadline: soneDate,
@@ -315,7 +315,7 @@ final class TodoItemTests: XCTestCase {
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItems = [
             TodoItem(
-                id: nil,
+                id: UUID().uuidString,
                 text: "text",
                 importance: .usual,
                 deadline: nil,
