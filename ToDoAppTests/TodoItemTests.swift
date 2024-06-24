@@ -14,7 +14,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .important,
             deadline: someDate,
@@ -40,7 +40,7 @@ final class TodoItemTests: XCTestCase {
               let jsonText = json?["text"] as? String,
               let jsonIsDone = json?["isDone"] as? Bool
         else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         let jsonDeadline = formatter.date(from: deadline ?? "") ?? nil
@@ -68,7 +68,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let dateOfCreationItem = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .usual,
             deadline: nil,
@@ -94,7 +94,7 @@ final class TodoItemTests: XCTestCase {
               let jsonText = json?["text"] as? String,
               let jsonIsDone = json?["isDone"] as? Bool
         else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         let jsonDeadline = formatter.date(from: deadline ?? "") ?? nil
@@ -122,7 +122,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .important,
             deadline: someDate,
@@ -134,7 +134,7 @@ final class TodoItemTests: XCTestCase {
         //when
         let json = TodoItem.parse(json: todoItem.json)
         guard let json else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         
@@ -162,7 +162,7 @@ final class TodoItemTests: XCTestCase {
         let formatter = JsonDateFormatter.standard
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
-            id: nil,
+            id: UUID().uuidString,
             text: "text",
             importance: .usual,
             deadline: nil,
@@ -174,7 +174,7 @@ final class TodoItemTests: XCTestCase {
         //when
         let json = TodoItem.parse(json: todoItem.json)
         guard let json else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         
@@ -201,167 +201,133 @@ final class TodoItemTests: XCTestCase {
         //given
         let formatter = JsonDateFormatter.standard
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
-        let todoItems = [
-            TodoItem(
-                id: nil,
-                text: "text",
-                importance: .important,
-                deadline: someDate,
-                isDone: true,
-                dateOfCreation: someDate,
-                dateOfChange: someDate
-            )
-        ]
+        let todoItem = TodoItem(
+            id: UUID().uuidString,
+            text: "text",
+            importance: .important,
+            deadline: someDate,
+            isDone: true,
+            dateOfCreation: someDate,
+            dateOfChange: someDate
+        )
         
         //when
-        let csv = TodoItem.converToCsv(todoItems: todoItems)
-        print("\(todoItems[0].importance)", todoItems[0].text)
+        let csv = todoItem.csv
         
         //then
-        XCTAssertTrue(csv.contains(todoItems[0].id))
-        XCTAssertTrue(csv.contains(todoItems[0].text))
-        XCTAssertTrue(csv.contains("\(todoItems[0].importance)"))
-        XCTAssertTrue(csv.contains("\(todoItems[0].isDone)"))
-        XCTAssertTrue(csv.contains(formatter.string(from: todoItems[0].dateOfCreation)))
+        XCTAssertTrue(csv.contains(todoItem.id))
+        XCTAssertTrue(csv.contains(todoItem.text))
+        XCTAssertTrue(csv.contains("\(todoItem.importance)"))
+        XCTAssertTrue(csv.contains("\(todoItem.isDone)"))
+        XCTAssertTrue(csv.contains(formatter.string(from: todoItem.dateOfCreation)))
     }
     
     func testConverToCsvWithOptionals() {
         //given
         let formatter = JsonDateFormatter.standard
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
-        let todoItems = [
-            TodoItem(
-                id: nil,
-                text: "text",
-                importance: .usual,
-                deadline: nil,
-                isDone: true,
-                dateOfCreation: dateOfCreation,
-                dateOfChange: nil
-            )
-        ]
+        let todoItem = TodoItem(
+            id: UUID().uuidString,
+            text: "text",
+            importance: .usual,
+            deadline: nil,
+            isDone: true,
+            dateOfCreation: dateOfCreation,
+            dateOfChange: nil
+        )
         
         //when
-        let csv = TodoItem.converToCsv(todoItems: todoItems)
-        print("\(todoItems[0].importance)", todoItems[0].text)
+        let csv = todoItem.csv
         
         //then
-        XCTAssertTrue(csv.contains(todoItems[0].id))
-        XCTAssertTrue(csv.contains(todoItems[0].text))
-        XCTAssertTrue(csv.contains("\(todoItems[0].importance)"))
-        XCTAssertTrue(csv.contains("\(todoItems[0].isDone)"))
-        XCTAssertTrue(csv.contains(formatter.string(from: todoItems[0].dateOfCreation)))
+        XCTAssertTrue(csv.contains(todoItem.id))
+        XCTAssertTrue(csv.contains(todoItem.text))
+        XCTAssertTrue(!csv.contains("\(todoItem.importance)"))
+        XCTAssertTrue(csv.contains("\(todoItem.isDone)"))
+        XCTAssertTrue(csv.contains(formatter.string(from: todoItem.dateOfCreation)))
     }
     
     func testParseCsv() {
         //given
         let formatter = JsonDateFormatter.standard
-        let soneDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
-        let todoItems = [
-            TodoItem(
-                id: nil,
-                text: "text",
-                importance: .unimportant,
-                deadline: soneDate,
-                isDone: true,
-                dateOfCreation: soneDate,
-                dateOfChange: soneDate
-            ),
-            TodoItem(
-                id: "123",
-                text: "text",
-                importance: .important,
-                deadline: Date(),
-                isDone: true,
-                dateOfCreation: soneDate,
-                dateOfChange: soneDate
-            )
-        ]
+        let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
+        let todoItem = TodoItem(
+            id: UUID().uuidString,
+            text: "text",
+            importance: .unimportant,
+            deadline: someDate,
+            isDone: true,
+            dateOfCreation: someDate,
+            dateOfChange: someDate
+        )
         
         //when
-        let csv = TodoItem.converToCsv(todoItems: todoItems)
+        let csv = todoItem.csv
         let todoItemsCsv = TodoItem.parse(csv: csv)
         
         guard let todoItemsCsv else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         
         //then
-        XCTAssertTrue(todoItemsCsv.count == todoItems.count)
-        for i in 0..<todoItemsCsv.count {
-            XCTAssertEqual(todoItemsCsv[i].id, todoItems[i].id)
-            XCTAssertEqual(todoItemsCsv[i].text, todoItems[i].text)
-            XCTAssertEqual(todoItemsCsv[i].importance, todoItems[i].importance)
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].deadline),
-                String(describing: todoItems[i].deadline)
-            )
-            XCTAssertEqual(todoItemsCsv[i].isDone, todoItems[i].isDone)
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].dateOfCreation),
-                String(describing:todoItems[i].dateOfCreation)
-            )
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].dateOfChange),
-                String(describing: todoItems[i].dateOfChange)
-            )
-        }
+        XCTAssertEqual(todoItemsCsv.id, todoItem.id)
+        XCTAssertEqual(todoItemsCsv.text, todoItem.text)
+        XCTAssertEqual(todoItemsCsv.importance, todoItem.importance)
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.deadline),
+            String(describing: todoItem.deadline)
+        )
+        XCTAssertEqual(todoItemsCsv.isDone, todoItem.isDone)
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.dateOfCreation),
+            String(describing:todoItem.dateOfCreation)
+        )
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.dateOfChange),
+            String(describing: todoItem.dateOfChange)
+        )
     }
     
     func testParseCsvWithOptionals() {
         //given
         let formatter = JsonDateFormatter.standard
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
-        let todoItems = [
-            TodoItem(
-                id: nil,
-                text: "text",
-                importance: .usual,
-                deadline: nil,
-                isDone: true,
-                dateOfCreation: dateOfCreation,
-                dateOfChange: nil
-            ),
-            TodoItem(
-                id: "123",
-                text: "text",
-                importance: .usual,
-                deadline: Date(),
-                isDone: true,
-                dateOfCreation: dateOfCreation,
-                dateOfChange: nil
-            )
-        ]
+        let todoItem = TodoItem(
+            id: UUID().uuidString,
+            text: "text",
+            importance: .usual,
+            deadline: nil,
+            isDone: true,
+            dateOfCreation: dateOfCreation,
+            dateOfChange: nil
+        )
         
         //when
-        let csv = TodoItem.converToCsv(todoItems: todoItems)
+        let csv = todoItem.csv
         let todoItemsCsv = TodoItem.parse(csv: csv)
         
         guard let todoItemsCsv else {
-            XCTAssertNotNil(nil)
+            XCTFail()
             return
         }
         
         //then
-        XCTAssertTrue(todoItemsCsv.count == todoItems.count)
-        for i in 0..<todoItemsCsv.count {
-            XCTAssertEqual(todoItemsCsv[i].id, todoItems[i].id)
-            XCTAssertEqual(todoItemsCsv[i].text, todoItems[i].text)
-            XCTAssertEqual(todoItemsCsv[i].importance, todoItems[i].importance)
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].deadline),
-                String(describing: todoItems[i].deadline)
-            )
-            XCTAssertEqual(todoItemsCsv[i].isDone, todoItems[i].isDone)
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].dateOfCreation),
-                String(describing:todoItems[i].dateOfCreation)
-            )
-            XCTAssertEqual(
-                String(describing: todoItemsCsv[i].dateOfChange),
-                String(describing: todoItems[i].dateOfChange)
-            )
-        }
+        XCTAssertEqual(todoItemsCsv.id, todoItem.id)
+        XCTAssertEqual(todoItemsCsv.text, todoItem.text)
+        XCTAssertEqual(todoItemsCsv.importance, todoItem.importance)
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.deadline),
+            String(describing: todoItem.deadline)
+        )
+        XCTAssertEqual(todoItemsCsv.isDone, todoItem.isDone)
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.dateOfCreation),
+            String(describing:todoItem.dateOfCreation)
+        )
+        XCTAssertEqual(
+            String(describing: todoItemsCsv.dateOfChange),
+            String(describing: todoItem.dateOfChange)
+        )
     }
 }

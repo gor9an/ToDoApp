@@ -23,8 +23,9 @@ final class FileCache {
         todoItems[toDoItem.id] = toDoItem
     }
     
-    func delTask(id: String) {
-        todoItems[id] = nil
+    @discardableResult
+    func delTask(id: String) -> TodoItem? {
+        return todoItems.removeValue(forKey: id)
     }
     
     func fetchTodoItems(from fileName: String = "default.json") {
@@ -44,7 +45,7 @@ final class FileCache {
                 for items in dictionary {
                     guard let item = TodoItem.parse(json: items) else {
                         print("fetchTodoItems() - parse error")
-                        return
+                        continue
                     }
                     addNewTask(item)
                 }
@@ -80,14 +81,14 @@ final class FileCache {
             print("getSourcePath(with fileName: String?) - error creating the source path")
             return
         }
-        documents.append(path: "JsonStorage")
+        documents.append(path: "CacheStorage")
         
         do {
             try fileManager.createDirectory(
                 at: documents,
                 withIntermediateDirectories: true)
         } catch {
-            print("getSourcePath(with fileName: String?) - error creating the JsonStorage dir: \(error.localizedDescription)")
+            print("getSourcePath(with fileName: String?) - error creating the CacheStorage dir: \(error.localizedDescription)")
         }
         
         path = documents

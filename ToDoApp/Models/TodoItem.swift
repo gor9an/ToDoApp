@@ -19,20 +19,19 @@ struct TodoItem: Equatable {
     
     // MARK: Init
     init(
-        id: String?,
+        id: String = UUID().uuidString,
         text: String,
         importance: Importance,
         deadline: Date?,
-        isDone: Bool,
-        dateOfCreation: Date,
+        isDone: Bool = false,
+        dateOfCreation: Date = Date(),
         dateOfChange: Date?
     ) {
-        if let id, id != "" {
-            self.id = id
-        } else {
+        if id == "" {
             self.id = UUID().uuidString
+        } else {
+            self.id = id
         }
-        
         self.text = text
         self.importance = importance
         self.deadline = deadline

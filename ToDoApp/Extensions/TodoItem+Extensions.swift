@@ -9,42 +9,40 @@ import Foundation
 
 extension TodoItem {
     struct Constants {
-        let idString = "id"
-        let textString = "text"
-        let importanceString = "importance"
-        let deadlineString = "deadline"
-        let isDoneString = "isDone"
-        let dateOfCreationString = "dateOfCreation"
-        let dateOfChangeString = "dateOfChange"
+        static let idString = "id"
+        static let textString = "text"
+        static let importanceString = "importance"
+        static let deadlineString = "deadline"
+        static let isDoneString = "isDone"
+        static let dateOfCreationString = "dateOfCreation"
+        static let dateOfChangeString = "dateOfChange"
     }
     
     // MARK: Parsing and collecting a JSON file
     var json: Any {
         let formatter = JsonDateFormatter.standard
-        let const = Constants()
         
         var todoItem: [String : Any] = [
-            const.idString: id,
-            const.textString: text,
-            const.isDoneString: isDone,
-            const.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
+            Constants.idString: id,
+            Constants.textString: text,
+            Constants.isDoneString: isDone,
+            Constants.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
         ]
         
-        if importance != .usual { todoItem[const.importanceString] = importance.rawValue }
-        if let deadline { todoItem[const.deadlineString] = formatter.string(from: deadline) }
-        if let dateOfChange { todoItem[const.dateOfChangeString] = formatter.string(from: dateOfChange) }
+        if importance != .usual { todoItem[Constants.importanceString] = importance.rawValue }
+        if let deadline { todoItem[Constants.deadlineString] = formatter.string(from: deadline) }
+        if let dateOfChange { todoItem[Constants.dateOfChangeString] = formatter.string(from: dateOfChange) }
         
         return todoItem
     }
     
     static func parse(json: Any) -> TodoItem? {
-        let const = Constants()
         let formatter = JsonDateFormatter.standard
         guard let dictionary = json as? Dictionary<String, Any>,
-              let id = dictionary[const.idString] as? String,
-              let text = dictionary[const.textString] as? String,
-              let isDone = dictionary[const.isDoneString] as? Bool,
-              let creationDateString = dictionary[const.dateOfCreationString] as? String,
+              let id = dictionary[Constants.idString] as? String,
+              let text = dictionary[Constants.textString] as? String,
+              let isDone = dictionary[Constants.isDoneString] as? Bool,
+              let creationDateString = dictionary[Constants.dateOfCreationString] as? String,
               let dateOfCreation = formatter.date(from: creationDateString)
         else { return nil }
         
@@ -52,7 +50,7 @@ extension TodoItem {
         var deadline: Date? = nil
         var dateOfChange: Date? = nil
         
-        if let importanceString = dictionary[const.importanceString] as? String,
+        if let importanceString = dictionary[Constants.importanceString] as? String,
            let importanceRaw = Importance(rawValue: importanceString)
         {
             importance = importanceRaw
@@ -82,76 +80,46 @@ extension TodoItem {
 
 extension TodoItem {
     // MARK: Parsing and collecting a CSV file
-    static func converToCsv(todoItems: [TodoItem]) -> String {
+    var csv: String {
         let formatter = JsonDateFormatter.standard
-        var result = ""
+        var importanceString = ""
+        var deadlineString = ""
+        var dateOfChangeString = ""
         
-        for item in todoItems {
-            var line = ""
-            let itemMirror = Mirror(reflecting: item)
-            
-            for (_, value) in itemMirror.children {
-                if let stringValue = value as? String {
-                    line += "\(stringValue)"
-                } else if let boolValue = value as? Bool {
-                    line += "\(boolValue)"
-                } else if let dateValue = value as? Date {
-                    line += "\(formatter.string(from: dateValue))"
-                } else if let importanceValue = value as? Importance {
-                    line += "\(importanceValue.rawValue)"
-                }
-                
-                line += ","
-            }
-            
-            result.append(line)
-            result.removeLast()
-            result.append("\n")
-        }
+        if importance != .usual { importanceString = importance.rawValue }
+        if let deadline { deadlineString = formatter.string(from: deadline) }
+        if let dateOfChange { dateOfChangeString = formatter.string(from: dateOfChange) }
+        let dateOfCreationString = formatter.string(from: dateOfCreation)
         
-        return result
+        return "\(id),\(text),\(importanceString),\(deadlineString),\(isDone),\(dateOfCreationString),\(dateOfChangeString)"
     }
     
-    static func parse(csv: String) -> [TodoItem]? {
+    static func parse(csv: String) -> TodoItem? {
         let formatter = JsonDateFormatter.standard
-        let lines = csv.split(separator: "\n").map { "\($0)" }
-        var todoItems = [TodoItem]()
+        let values = csv.components(separatedBy: ",")
+        guard values.count == 7 else { return nil }
         
-        for line in lines {
-            let values = line.components(separatedBy: ",")
-            if values.count != 7 {
-                continue
-            }
-            
-            
-            let id = values[0]
-            let text = values[1]
-            var importance: Importance = .usual
-            let dateOfChange = formatter.date(from: values[6])
-            let deadline = formatter.date(from: values[3])
-            
-            if let importanceRaw = Importance(rawValue: values[2]) {
-                importance = importanceRaw
-            }
-            
-            guard 
-                let isDone = Bool(values[4]),
-                let dateOfCreation = formatter.date(from: values[5])
-            else { return nil }
-            
-            let todoItem = TodoItem(
-                id: id,
-                text: text,
-                importance: importance,
-                deadline: deadline,
-                isDone: isDone,
-                dateOfCreation: dateOfCreation,
-                dateOfChange: dateOfChange
-            )
-            
-            todoItems.append(todoItem)
-        }
+        let id = values[0]
+        let text = values[1]
+        var importance: Importance = .usual
+        if let importanceRaw = Importance(rawValue: values[2]) { importance = importanceRaw }
+        let deadline = formatter.date(from: values[3])
+        guard
+            let isDone = Bool(values[4]),
+            let dateOfCreation = formatter.date(from: values[5])
+        else { return nil }
+        let dateOfChange = formatter.date(from: values[6])
         
-        return todoItems
+        let todoItem = TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            deadline: deadline,
+            isDone: isDone,
+            dateOfCreation: dateOfCreation,
+            dateOfChange: dateOfChange
+        )
+        
+        return todoItem
     }
 }
