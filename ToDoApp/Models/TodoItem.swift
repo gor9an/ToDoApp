@@ -27,7 +27,11 @@ struct TodoItem: Equatable {
         dateOfCreation: Date = Date(),
         dateOfChange: Date?
     ) {
-        self.id = id
+        if id == "" {
+            self.id = UUID().uuidString
+        } else {
+            self.id = id
+        }
         self.text = text
         self.importance = importance
         self.deadline = deadline

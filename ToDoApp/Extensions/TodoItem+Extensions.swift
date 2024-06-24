@@ -9,42 +9,40 @@ import Foundation
 
 extension TodoItem {
     struct Constants {
-        let idString = "id"
-        let textString = "text"
-        let importanceString = "importance"
-        let deadlineString = "deadline"
-        let isDoneString = "isDone"
-        let dateOfCreationString = "dateOfCreation"
-        let dateOfChangeString = "dateOfChange"
+        static let idString = "id"
+        static let textString = "text"
+        static let importanceString = "importance"
+        static let deadlineString = "deadline"
+        static let isDoneString = "isDone"
+        static let dateOfCreationString = "dateOfCreation"
+        static let dateOfChangeString = "dateOfChange"
     }
     
     // MARK: Parsing and collecting a JSON file
     var json: Any {
         let formatter = JsonDateFormatter.standard
-        let const = Constants()
         
         var todoItem: [String : Any] = [
-            const.idString: id,
-            const.textString: text,
-            const.isDoneString: isDone,
-            const.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
+            Constants.idString: id,
+            Constants.textString: text,
+            Constants.isDoneString: isDone,
+            Constants.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
         ]
         
-        if importance != .usual { todoItem[const.importanceString] = importance.rawValue }
-        if let deadline { todoItem[const.deadlineString] = formatter.string(from: deadline) }
-        if let dateOfChange { todoItem[const.dateOfChangeString] = formatter.string(from: dateOfChange) }
+        if importance != .usual { todoItem[Constants.importanceString] = importance.rawValue }
+        if let deadline { todoItem[Constants.deadlineString] = formatter.string(from: deadline) }
+        if let dateOfChange { todoItem[Constants.dateOfChangeString] = formatter.string(from: dateOfChange) }
         
         return todoItem
     }
     
     static func parse(json: Any) -> TodoItem? {
-        let const = Constants()
         let formatter = JsonDateFormatter.standard
         guard let dictionary = json as? Dictionary<String, Any>,
-              let id = dictionary[const.idString] as? String,
-              let text = dictionary[const.textString] as? String,
-              let isDone = dictionary[const.isDoneString] as? Bool,
-              let creationDateString = dictionary[const.dateOfCreationString] as? String,
+              let id = dictionary[Constants.idString] as? String,
+              let text = dictionary[Constants.textString] as? String,
+              let isDone = dictionary[Constants.isDoneString] as? Bool,
+              let creationDateString = dictionary[Constants.dateOfCreationString] as? String,
               let dateOfCreation = formatter.date(from: creationDateString)
         else { return nil }
         
@@ -52,7 +50,7 @@ extension TodoItem {
         var deadline: Date? = nil
         var dateOfChange: Date? = nil
         
-        if let importanceString = dictionary[const.importanceString] as? String,
+        if let importanceString = dictionary[Constants.importanceString] as? String,
            let importanceRaw = Importance(rawValue: importanceString)
         {
             importance = importanceRaw
