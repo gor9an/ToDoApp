@@ -16,6 +16,7 @@ struct TodoItemDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                Spacer()
                 todoTextEditor
                 
                 VStack(spacing: 0) {
@@ -37,12 +38,12 @@ struct TodoItemDetailsView: View {
                 
             }
         }
-        .padding(16)
         .navigationBarTitle("Дело", displayMode: .inline)
         .navigationBarItems(
             leading: dismissButton,
             trailing: saveButton
         )
+        .padding(.horizontal, 16)
         .background(Color.backPrimary)
     }
     
@@ -71,8 +72,9 @@ struct TodoItemDetailsView: View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $viewModel.task.text)
                 .frame(minHeight: 120)
-                .padding(16)
+                .scrollContentBackground(.hidden)
                 .background(Color.backSecondary)
+                .padding(16)
             if viewModel.task.text.isEmpty {
                 Text("Что надо сделать?")
                     .padding(24)
@@ -133,10 +135,11 @@ struct TodoItemDetailsView: View {
                         datePickerShow.toggle()
                     },
                            label: {
-                        Text(viewModel.task.deadline?.formatted(
-                            date: .abbreviated,
-                            time: .omitted
-                        ) ?? "")
+                        Text(                            viewModel.task.deadline?.formatted(
+                                date: .abbreviated,
+                                time: .omitted
+                            ) ?? ""
+                        )
                         .font(.system(size: 13, weight: .bold))
                     })
                     .font(.caption)
@@ -160,6 +163,7 @@ struct TodoItemDetailsView: View {
             displayedComponents: .date
         )
         .datePickerStyle(.graphical)
+        .frame(width: 320)
     }
     
     var deleteButton: some View {
