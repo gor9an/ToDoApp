@@ -7,15 +7,15 @@
 
 import Foundation
 
-struct TodoItem: Equatable {
+struct TodoItem: Equatable, Identifiable {
     // MARK: Properties
     let id: String
     var text: String
     var importance: Importance
     var deadline: Date?
-    let isDone: Bool
+    var isDone: Bool
     let dateOfCreation: Date
-    let dateOfChange: Date?
+    var dateOfChange: Date?
     
     // MARK: Init
     init(
@@ -38,6 +38,7 @@ struct TodoItem: Equatable {
         self.isDone = isDone
         self.dateOfCreation = dateOfCreation
         self.dateOfChange = dateOfChange
+        self.hexColor = hexColor
     }
     
     // MARK: Importance enum
