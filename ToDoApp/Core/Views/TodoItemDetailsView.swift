@@ -9,9 +9,18 @@ import SwiftUI
 
 struct TodoItemDetailsView: View {
     @State var datePickerShow = false
-    @StateObject var viewModel = TodoItemViewModel()
+    @ObservedObject var viewModel: TodoItemDetailsViewModel
+    
     @Environment(\.dismiss)
     var dismiss
+    @Environment(\.horizontalSizeClass)
+    var horizontalSizeClass
+    @Environment(\.verticalSizeClass)
+    var verticalSizeClass
+    
+    init(viewModel: TodoItemDetailsViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         ScrollView {
@@ -19,25 +28,27 @@ struct TodoItemDetailsView: View {
                 Spacer()
                 todoTextEditor
                 
-                VStack(spacing: 0) {
-                    importancePicker
-                    Divider()
-                        .padding(.horizontal)
-                    deadlineToggle
-                    
-                    if datePickerShow {
+                if (horizontalSizeClass == .compact && verticalSizeClass == .regular) || (horizontalSizeClass == verticalSizeClass) {
+                    VStack(spacing: 0) {
+                        importancePicker
                         Divider()
                             .padding(.horizontal)
-                        deadlineDatePicker
+                        deadlineToggle
+                        
+                        if datePickerShow {
+                            Divider()
+                                .padding(.horizontal)
+                            deadlineDatePicker
+                        }
                     }
+                    .background(Color.backSecondary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    
+                    deleteButton
                 }
-                .background(Color.backSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                
-                deleteButton
-                
             }
         }
+        .scrollDismissesKeyboard(.immediately)
         .navigationBarTitle("Дело", displayMode: .inline)
         .navigationBarItems(
             leading: dismissButton,
@@ -48,13 +59,15 @@ struct TodoItemDetailsView: View {
     }
     
     var saveButton: some View {
+        
         Button(action: {
-            viewModel.saveTodoItems()
+            viewModel.saveTask()
             dismiss()
         },
                label: {
             Text("Cохранить")
         })
+        .disabled(viewModel.task.text == "")
     }
     
     var dismissButton: some View {
@@ -115,24 +128,29 @@ struct TodoItemDetailsView: View {
             get: { viewModel.isDeadlineEnabled },
             set: { _ in
                 viewModel.toggleDeadline()
-                datePickerShow = false
+                withAnimation {
+                    datePickerShow = false
+                }
             }
         )) {
             VStack (alignment: .leading) {
                 Text("Сделать до")
                 if viewModel.task.deadline != nil && viewModel.isDeadlineEnabled {
                     
-                    Button(action: {
-                        datePickerShow.toggle()
-                    },
-                           label: {
-                        Text(                            viewModel.task.deadline?.formatted(
+                    Button(
+                        action: {
+                            withAnimation {
+                                datePickerShow.toggle()
+                            }
+                            
+                        },
+                        label: {
+                            Text(viewModel.task.deadline?.formatted(
                                 date: .abbreviated,
-                                time: .omitted
-                            ) ?? ""
-                        )
-                        .font(.system(size: 13, weight: .bold))
-                    })
+                                time: .omitted) ?? ""
+                            )
+                            .font(.system(size: 13, weight: .bold))
+                        })
                     .font(.caption)
                     .foregroundStyle(.blueCustom)
                 }
@@ -155,12 +173,14 @@ struct TodoItemDetailsView: View {
         )
         .datePickerStyle(.graphical)
         .frame(width: 320)
+        .transition(.asymmetric(insertion: .scale, removal: .opacity))
     }
     
     var deleteButton: some View {
         Button (
             action: {
-                viewModel.deleteTodoItems()
+                viewModel.deleteTask()
+                dismiss()
             },
             label: {
                 Text("Удалить")
@@ -176,5 +196,15 @@ struct TodoItemDetailsView: View {
 }
 
 #Preview {
-    TodoItemDetailsView()
+    TodoItemDetailsView(
+        viewModel: TodoItemDetailsViewModel(
+            task: TodoItem(
+                text: "text",
+                importance: .usual,
+                deadline: Date(),
+                dateOfChange: nil
+            ),
+            todoListViewModel: TodoListViewModel()
+        )
+    )
 }
