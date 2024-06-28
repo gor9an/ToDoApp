@@ -94,16 +94,8 @@ struct TodoItemDetailsView: View {
             Spacer()
             Picker("Важность", selection: Binding(get: {
                 viewModel.task.importance
-            }, set: { newImportance in
-                viewModel.task = TodoItem(
-                    id: viewModel.task.id,
-                    text: viewModel.task.text,
-                    importance: newImportance,
-                    deadline: viewModel.task.deadline,
-                    isDone: viewModel.task.isDone,
-                    dateOfCreation: viewModel.task.dateOfCreation,
-                    dateOfChange: Date()
-                )
+            }, set: {
+                viewModel.setImportance(importance: $0)
             })) {
                 Image(systemName: "arrow.down").tag(TodoItem.Importance.usual)
                 Text("нет").tag(TodoItem.Importance.unimportant)
@@ -119,7 +111,6 @@ struct TodoItemDetailsView: View {
     }
     
     var deadlineToggle: some View {
-        
         Toggle(isOn: Binding(
             get: { viewModel.isDeadlineEnabled },
             set: { _ in
@@ -157,7 +148,7 @@ struct TodoItemDetailsView: View {
             "",
             selection: Binding(
                 get: { viewModel.task.deadline ?? Date() },
-                set: { viewModel.task.deadline = $0 }
+                set: { viewModel.setDeadline(deadline: $0) }
             ),
             in: Date.now...,
             displayedComponents: .date
