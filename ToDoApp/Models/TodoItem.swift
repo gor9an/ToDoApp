@@ -38,7 +38,6 @@ struct TodoItem: Equatable, Identifiable {
         self.isDone = isDone
         self.dateOfCreation = dateOfCreation
         self.dateOfChange = dateOfChange
-        self.hexColor = hexColor
     }
     
     // MARK: Importance enum

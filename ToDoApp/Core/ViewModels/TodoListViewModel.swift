@@ -20,15 +20,6 @@ class TodoListViewModel: ObservableObject {
             TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
             TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
             TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil)
         ]
     }
     var newTask: TodoItem {
