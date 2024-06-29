@@ -16,9 +16,7 @@ final class FileCache {
     // MARK: Functions
     func addNewTask(_ toDoItem: TodoItem) {
         if todoItems[toDoItem.id] != nil {
-            print("id duplicate")
-            return
-            
+            todoItems[toDoItem.id] = nil
         }
         todoItems[toDoItem.id] = toDoItem
     }
