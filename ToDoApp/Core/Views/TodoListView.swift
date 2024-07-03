@@ -10,21 +10,22 @@ import SwiftUI
 struct TodoListView: View {
     @StateObject var viewModel = TodoListViewModel()
     @State var showDetailsView = false
+    @State var showCalendarView = false
     @State var selectedTask: TodoItem?
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 12) {
-                todoHeaderView
-                ZStack{
-                    todoList
-                    addTaskButton
-                }
+            ZStack {
+                todoList
+                addTaskButton
             }
             .navigationTitle("Мои дела")
-            .scrollContentBackground(.hidden)
-            .background(Color.backPrimary)
+            .toolbar {
+                calendarButton
+            }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.backPrimary)
     }
     
     var todoHeaderView: some View {
@@ -41,72 +42,89 @@ struct TodoListView: View {
                     .foregroundColor(.blueCustom)
             }
         }
-        .padding(.horizontal, 32)
+        .textCase(nil)
+        .padding(.bottom, 12)
+    }
+    
+    var calendarButton: some View {
+        Button(action: {
+            showCalendarView = true
+        }, label: {
+            Image(systemName: "calendar")
+        })
+        .fullScreenCover(isPresented: $showCalendarView, content: {
+            CalendarVCRepresentable()
+                .edgesIgnoringSafeArea(.vertical)
+        })
     }
     
     var todoList: some View {
         List {
-            ForEach(viewModel.filteredTasks) { task in
-                HStack(alignment: .center) {
-                    completionIconView(for: task)
-                    if task.importance == .important {
-                        Image(systemName: "exclamationmark.2")
-                            .foregroundColor(.redCustom)
-                    }
-                    taskDetailsView(for: task)
-                    Spacer()
-                    
-                    Button(action: {
-                        selectedTask = task
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
-                    }
-                    
-                }
-                .listRowInsets(EdgeInsets())
-                .padding(16)
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button() {
-                        viewModel.deleteTask(task: task)
-                    } label: {
-                        Label("Удалить", systemImage: "trash")
-                    }
-                    .tint(.redCustom)
-                }
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button() {
-                        selectedTask = task
-                    } label: {
-                        Label("Инфо", systemImage: "info.circle")
-                    }
-                    .sheet(item: $selectedTask, content: { task in
-                        NavigationStack {
-                            TodoItemDetailsView(viewModel: TodoItemDetailsViewModel(task: task, todoListViewModel: viewModel))
+            Section {
+                ForEach(viewModel.filteredTasks) { task in
+                    HStack(alignment: .center) {
+                        completionIconView(for: task)
+                        if task.importance == .important {
+                            Image(systemName: "exclamationmark.2")
+                                .foregroundColor(.redCustom)
                         }
-                    })
-                }
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                    Button() {
-                        viewModel.toggleTaskCompletion(task: task)
-                    } label: {
-                        Label("Выполнить", systemImage: "checkmark.circle.fill")
+                        taskDetailsView(for: task)
+                        Spacer()
+                        
+                        Button(action: {
+                            selectedTask = task
+                        }) {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                        
                     }
-                    .tint(.greenCustom)
+                    .listRowInsets(EdgeInsets())
+                    .padding(16)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button() {
+                            viewModel.deleteTask(task: task)
+                        } label: {
+                            Label("Удалить", systemImage: "trash")
+                        }
+                        .tint(.redCustom)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button() {
+                            selectedTask = task
+                        } label: {
+                            Label("Инфо", systemImage: "info.circle")
+                        }
+                        .sheet(item: $selectedTask, content: { task in
+                            NavigationStack {
+                                TodoItemDetailsView(viewModel: TodoItemDetailsViewModel(task: task, todoListViewModel: viewModel))
+                            }
+                        })
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button() {
+                            viewModel.toggleTaskCompletion(task: task)
+                        } label: {
+                            Label("Выполнить", systemImage: "checkmark.circle.fill")
+                        }
+                        .tint(.greenCustom)
+                    }
                 }
+                
+                Button(
+                    action: {
+                        showDetailsView.toggle()
+                    },
+                    label: {
+                        Text("Новое")
+                    }
+                )
+                .padding(.horizontal, 30)
+                .padding(.vertical, 15)
+                .foregroundStyle(.labelTertiary)
+            } header: {
+                todoHeaderView
             }
-            
-            Button(
-                action: {
-                    showDetailsView.toggle()
-                },
-                label: {
-                    Text("Новое")
-                }
-            )
-            .padding(.horizontal, 35)
-            .padding(.vertical, 16)
-            .tint(.labelTertiary)
         }
         .sheet(isPresented: $showDetailsView) {
             NavigationStack {
@@ -124,7 +142,8 @@ struct TodoListView: View {
             NavigationStack {
                 TodoItemDetailsView(
                     viewModel: TodoItemDetailsViewModel(task: task, todoListViewModel: viewModel)
-                )            }
+                )
+            }
         }
         .listStyle(InsetGroupedListStyle())
     }
