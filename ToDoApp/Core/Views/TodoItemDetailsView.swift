@@ -18,44 +18,46 @@ struct TodoItemDetailsView: View {
     @Environment(\.verticalSizeClass)
     var verticalSizeClass
     
-    init(viewModel: TodoItemDetailsViewModel) {
-        self.viewModel = viewModel
+    init(task: TodoItem) {
+        self.viewModel = TodoItemDetailsViewModel(task: task)
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                Spacer()
-                todoTextEditor
-                
-                if (horizontalSizeClass == .compact && verticalSizeClass == .regular) || (horizontalSizeClass == verticalSizeClass) {
-                    VStack(spacing: 0) {
-                        importancePicker
-                        Divider()
-                            .padding(.horizontal)
-                        deadlineToggle
-                        
-                        if datePickerShow {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Spacer()
+                    todoTextEditor
+                    
+                    if (horizontalSizeClass == .compact && verticalSizeClass == .regular) || (horizontalSizeClass == verticalSizeClass) {
+                        VStack(spacing: 0) {
+                            importancePicker
                             Divider()
                                 .padding(.horizontal)
-                            deadlineDatePicker
+                            deadlineToggle
+                            
+                            if datePickerShow {
+                                Divider()
+                                    .padding(.horizontal)
+                                deadlineDatePicker
+                            }
                         }
+                        .background(Color.backSecondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        
+                        deleteButton
                     }
-                    .background(Color.backSecondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
-                    deleteButton
                 }
             }
+            .scrollDismissesKeyboard(.immediately)
+            .navigationBarTitle("Дело", displayMode: .inline)
+            .navigationBarItems(
+                leading: dismissButton,
+                trailing: saveButton
+            )
+            .padding(.horizontal, 16)
+            .background(Color.backPrimary)
         }
-        .scrollDismissesKeyboard(.immediately)
-        .navigationBarTitle("Дело", displayMode: .inline)
-        .navigationBarItems(
-            leading: dismissButton,
-            trailing: saveButton
-        )
-        .padding(.horizontal, 16)
-        .background(Color.backPrimary)
     }
     
     var saveButton: some View {
@@ -197,14 +199,11 @@ struct TodoItemDetailsView: View {
 
 #Preview {
     TodoItemDetailsView(
-        viewModel: TodoItemDetailsViewModel(
             task: TodoItem(
                 text: "text",
                 importance: .usual,
                 deadline: Date(),
                 dateOfChange: nil
-            ),
-            todoListViewModel: TodoListViewModel()
         )
     )
 }

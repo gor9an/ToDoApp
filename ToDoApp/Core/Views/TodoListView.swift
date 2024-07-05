@@ -54,7 +54,10 @@ struct TodoListView: View {
         })
         .fullScreenCover(isPresented: $showCalendarView, content: {
             CalendarVCRepresentable()
-                .edgesIgnoringSafeArea(.vertical)
+                .edgesIgnoringSafeArea(.all)
+                .onDisappear(perform: {
+                    viewModel.refreshData()
+                })
         })
     }
     
@@ -96,9 +99,10 @@ struct TodoListView: View {
                             Label("Инфо", systemImage: "info.circle")
                         }
                         .sheet(item: $selectedTask, content: { task in
-                            NavigationStack {
-                                TodoItemDetailsView(viewModel: TodoItemDetailsViewModel(task: task, todoListViewModel: viewModel))
-                            }
+                            TodoItemDetailsView(task: task)
+                                .onDisappear(perform: {
+                                    viewModel.refreshData()
+                                })
                         })
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
@@ -127,23 +131,18 @@ struct TodoListView: View {
             }
         }
         .sheet(isPresented: $showDetailsView) {
-            NavigationStack {
-                let newTask = viewModel.newTask
-                TodoItemDetailsView(
-                    viewModel: TodoItemDetailsViewModel(
-                        task: newTask,
-                        todoListViewModel: viewModel
-                    )
-                )
-            }
+            let newTask = viewModel.newTask
+            TodoItemDetailsView(task: newTask)
+                .onDisappear(perform: {
+                    viewModel.refreshData()
+                })
         }
         .sheet(item: $selectedTask) {
             task in
-            NavigationStack {
-                TodoItemDetailsView(
-                    viewModel: TodoItemDetailsViewModel(task: task, todoListViewModel: viewModel)
-                )
-            }
+            TodoItemDetailsView(task: task)
+                .onDisappear(perform: {
+                    viewModel.refreshData()
+                })
         }
         .listStyle(InsetGroupedListStyle())
     }
@@ -159,15 +158,11 @@ struct TodoListView: View {
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
         .sheet(isPresented: $showDetailsView) {
-            NavigationStack {
-                let newTask = viewModel.newTask
-                TodoItemDetailsView(
-                    viewModel: TodoItemDetailsViewModel(
-                        task: newTask,
-                        todoListViewModel: viewModel
-                    )
-                )
-            }
+            let newTask = viewModel.newTask
+            TodoItemDetailsView(task: newTask)
+                .onDisappear(perform: {
+                    viewModel.refreshData()
+                })
         }
         .padding()
     }

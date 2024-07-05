@@ -6,24 +6,34 @@
 //
 
 import Foundation
+import SwiftUI
 
 class TodoListViewModel: ObservableObject {
+    var fileCache = FileCache()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
     
     init() {
-        loadTasks()
+        fileCache.fetchTodoItems()
+        self.tasks = fileCache.todoItems.map { $0.value }
     }
     
-    func loadTasks() {
-        tasks = [
-            TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-        ]
-    }
     var newTask: TodoItem {
         TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil)
+    }
+    
+    func refreshData() {
+        fileCache.fetchTodoItems()
+        self.tasks = fileCache.todoItems.map { $0.value }
+    }
+    
+    func fetchItems() {
+        fileCache.fetchTodoItems()
+        tasks = fileCache.todoItems.map { $0.value }
+    }
+    
+    func save() {
+        fileCache.saveTodoItems()
     }
     
     func addTask(text: String, importance: TodoItem.Importance, deadline: Date?) {
@@ -34,10 +44,6 @@ class TodoListViewModel: ObservableObject {
             dateOfChange: nil
         )
         tasks.append(newTask)
-    }
-    
-    func changeTask(text: String, importance: TodoItem.Importance, deadline: Date?) {
-        
     }
     
     func deleteTask(task: TodoItem) {
