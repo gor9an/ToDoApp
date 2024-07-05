@@ -9,8 +9,9 @@ import SwiftUI
 
 struct CalendarVCRepresentable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
-        let vc = CalendarViewController()
-        return vc
+        let viewController = CalendarViewController()
+        let navigationViewController = UINavigationController(rootViewController: viewController)
+        return navigationViewController
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
