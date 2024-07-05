@@ -27,32 +27,21 @@ class TodoListViewModel: ObservableObject {
         self.tasks = fileCache.todoItems.map { $0.value }
     }
     
-    func fetchItems() {
-        fileCache.fetchTodoItems()
-        tasks = fileCache.todoItems.map { $0.value }
-    }
-    
     func save() {
         fileCache.saveTodoItems()
     }
     
-    func addTask(text: String, importance: TodoItem.Importance, deadline: Date?) {
-        let newTask = TodoItem(
-            text: text,
-            importance: importance,
-            deadline: deadline,
-            dateOfChange: nil
-        )
-        tasks.append(newTask)
-    }
-    
     func deleteTask(task: TodoItem) {
         tasks.removeAll { $0.id == task.id }
+        fileCache.deleteTask(id: task.id)
+        save()
     }
     
     func toggleTaskCompletion(task: TodoItem) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks[index].isDone.toggle()
+            fileCache.addNewTask(task)
+            save()
         }
     }
     

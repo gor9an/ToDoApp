@@ -161,7 +161,7 @@
 		B0873B2B2C348690001DD81E /* CalendarViewController */ = {
 			isa = PBXGroup;
 			children = (
-				B0A0FD942C35B37B00BF3338 /* Cells */,
+				B0A0FD942C35B37B00BF3338 /* Views */,
 				B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */,
 				B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */,
 			);
@@ -186,13 +186,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		B0A0FD942C35B37B00BF3338 /* Cells */ = {
+		B0A0FD942C35B37B00BF3338 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B0A0FD922C35B37300BF3338 /* DateCell.swift */,
 				B0A0FD952C35B39F00BF3338 /* TodoItemCell.swift */,
 			);
-			path = Cells;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B0D789962C2626890039E846 /* Extensions */ = {
