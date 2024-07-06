@@ -10,7 +10,13 @@ import SwiftUI
 
 final class CalendarViewController: UIViewController {
     //MARK: Private properties
-    private var todoItems = [TodoItem]()
+    private var todoItems = [TodoItem]() /*{
+        didSet {
+            DispatchQueue.main.async{
+                self.tableView.reloadData()
+            }
+        }
+    }*/
     private let fileCache = FileCache()
     
     private var collectionView: UICollectionView!
@@ -23,6 +29,7 @@ final class CalendarViewController: UIViewController {
     private var dates = [Date]()
     private var datesString = [String]()
     private var todoitemsDates = [String: [TodoItem]]()
+    private var selected: TodoItem?
     
     private var formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -36,8 +43,16 @@ final class CalendarViewController: UIViewController {
         super.viewDidLoad()
         configureViews()
         fetchTodoItems()
-        fetchDates()
-        groupTodoitemsWithDate()
+        
+        collectionView.selectItem(
+            at: IndexPath(row: 0, section: 0),
+            animated: true,
+            scrollPosition: .left
+        )
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        fileCache.saveTodoItems()
     }
     
     //MARK: Private functions
@@ -70,6 +85,7 @@ final class CalendarViewController: UIViewController {
         collectionView.layer.borderColor = UIColor.supportSeparator.cgColor
         collectionView.backgroundColor = .backPrimary
         collectionView.allowsMultipleSelection = false
+        collectionView.allowsSelection = true
         collectionView.showsHorizontalScrollIndicator = false
         
         collectionView.delegate = self
@@ -133,9 +149,19 @@ final class CalendarViewController: UIViewController {
     
     private func fetchTodoItems() {
         fileCache.fetchTodoItems()
-        todoItems = fileCache.todoItems.map { $0.value }
+        todoItems = fileCache.todoItems.map { $0.value }.sorted(by: {
+            guard let first = $0.deadline else {
+                return false
+            }
+            guard let second = $1.deadline else {
+                return true
+            }
+            
+            return first < second
+        })
         
-        tableView.reloadData()
+        fetchDates()
+        groupTodoItemsWithDate()
     }
     
     private func fetchDates() {
@@ -147,10 +173,12 @@ final class CalendarViewController: UIViewController {
                 datesString.append(current)
             }
         }
-        datesString.append("Другое")
+        if dates.count != todoItems.count {
+            datesString.append("Другое")
+        }
     }
     
-    private func groupTodoitemsWithDate() {
+    private func groupTodoItemsWithDate() {
         for date in dates {
             let current = formatter.string(from: date)
             todoitemsDates[current] = todoItems.compactMap{
@@ -161,6 +189,13 @@ final class CalendarViewController: UIViewController {
             }
         }
         todoitemsDates["Другое"] = todoItems.compactMap{ $0.deadline == nil ? $0 : nil }
+    }
+    
+    private func updateTask(selectedTask: TodoItem?, isDone: Bool) {
+        guard var newTask = selectedTask else { return }
+        newTask.isDone = isDone
+        fileCache.addNewTask(newTask)
+        fileCache.saveTodoItems()
     }
     
     //MARK: Objc functions
@@ -178,10 +213,11 @@ final class CalendarViewController: UIViewController {
 // MARK: DetailsView
 extension CalendarViewController {
     private func performTodoItemDetailsView() {
-        let newTask = TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil)
+        let newTask = TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil, category: nil)
         let todoItemDetailsView = TodoItemDetailsView(task: newTask)
             .onDisappear {
                 self.fetchTodoItems()
+                self.tableView.reloadData()
             }
         let hostingController = UIHostingController(rootView: todoItemDetailsView)
         hostingController.modalPresentationStyle = .popover
@@ -191,7 +227,6 @@ extension CalendarViewController {
 
 //MARK: UICollectionViewDelegate
 extension CalendarViewController: UICollectionViewDelegate {
-    
 }
 
 //MARK: UICollectionViewDataSource
@@ -209,6 +244,12 @@ extension CalendarViewController: UICollectionViewDataSource {
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dateCellIdentifier, for: indexPath) as! DateCell
         let date = datesString[indexPath.row]
+        
+        if cell.isSelected {
+            cell.selectCell()
+        } else {
+            cell.deselectCell()
+        }
         cell.configure(with: date)
         return cell
     }
@@ -221,7 +262,6 @@ extension CalendarViewController: UICollectionViewDataSource {
             at: indexPath
         ) as? DateCell else { return }
         cell.selectCell()
-        
         let currentIndexPath = IndexPath(row: 0, section: indexPath.row)
         tableView.scrollToRow(
             at: currentIndexPath,
@@ -230,10 +270,7 @@ extension CalendarViewController: UICollectionViewDataSource {
         )
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didDeselectItemAt indexPath: IndexPath
-    ) {
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(
             at: indexPath
         ) as? DateCell else { return }
@@ -268,6 +305,54 @@ extension CalendarViewController: UITableViewDelegate {
     ) -> String? {
         datesString[section]
     }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let indexPath = tableView.indexPathsForVisibleRows?.first  else { return }
+        let topSection = indexPath.section
+        let index = IndexPath(row: topSection, section: 0)
+        collectionView.scrollToItem(
+            at: index,
+            at: .left,
+            animated: true
+        )
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let key = datesString[indexPath.section]
+        let value = indexPath.row
+        
+        selected = todoitemsDates[key]?[value]
+        todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone.toggle()
+        
+        let action = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, boolValue in
+            self?.updateTask(selectedTask: self?.selected, isDone: true)
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            boolValue(true)
+        }
+        action.image = UIImage(systemName: "checkmark.circle.fill")
+        action.backgroundColor = UIColor(.greenCustom)
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let key = datesString[indexPath.section]
+        let value = indexPath.row
+        
+        selected = todoitemsDates[key]?[value]
+        todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone.toggle()
+        
+        let action = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, boolValue in
+            self?.updateTask(selectedTask: self?.selected, isDone: false)
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            boolValue(true)
+        }
+        action.image = UIImage(systemName: "circle")
+        action.backgroundColor = UIColor(.supportSeparator)
+        return UISwipeActionsConfiguration(actions: [action])
+    }
 }
 
 //MARK: UITableViewDataSource
@@ -289,12 +374,10 @@ extension CalendarViewController: UITableViewDataSource {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: todoCellIdentifier, for: indexPath) as? TodoItemCell,
-              let text = todoitemsDates[
-                datesString[indexPath.section]]?[indexPath.row
-                ].text
+              let item = todoitemsDates[datesString[indexPath.section]]?[indexPath.row]
         else { return UITableViewCell() }
-        
-        cell.textLabel?.text = text
+        cell.setLabel(for: item)
+        cell.setCategory(for: item)
         return cell
     }
 }

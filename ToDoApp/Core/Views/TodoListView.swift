@@ -87,6 +87,7 @@ struct TodoListView: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button() {
                             viewModel.deleteTask(task: task)
+                            viewModel.refreshData()
                         } label: {
                             Label("Удалить", systemImage: "trash")
                         }
@@ -108,6 +109,7 @@ struct TodoListView: View {
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button() {
                             viewModel.toggleTaskCompletion(task: task)
+                            viewModel.refreshData()
                         } label: {
                             Label("Выполнить", systemImage: "checkmark.circle.fill")
                         }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TodoItemDetailsView: View {
     @State var datePickerShow = false
+    @State private var categoryPickerShow = false
     @ObservedObject var viewModel: TodoItemDetailsViewModel
     
     @Environment(\.dismiss)
@@ -41,6 +42,10 @@ struct TodoItemDetailsView: View {
                                     .padding(.horizontal)
                                 deadlineDatePicker
                             }
+                            
+                            Divider()
+                                .padding(.horizontal)
+                            categoryPickerView
                         }
                         .background(Color.backSecondary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -178,6 +183,56 @@ struct TodoItemDetailsView: View {
         .transition(.asymmetric(insertion: .scale, removal: .opacity))
     }
     
+    private var categoryPickerView: some View {
+        VStack {
+            HStack {
+                Text("Выбрать категорию")
+                    .foregroundColor(.labelPrimary)
+                    .padding(16)
+                Spacer()
+                Button(action: {
+                    categoryPickerShow.toggle()
+                }, label: {
+                    HStack {
+                        Text(viewModel.task.category?.name ?? "Выберите")
+                            .padding(16)
+                            .foregroundColor(.blueCustom)
+                        if let color = viewModel.task.category?.hexColor {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(Color.init(hex: color))
+                                .padding(.trailing, 16)
+                        }
+                    }
+                })
+            }
+            
+            if categoryPickerShow {
+                Divider()
+                    .padding(.horizontal)
+                Picker("", selection: Binding(
+                    get: { viewModel.task.category ?? viewModel.todoItemCategories[0] },
+                    set: { viewModel.setCategory(category: $0) }
+                )) {
+                    ForEach(viewModel.todoItemCategories) { category in
+                        HStack {
+                            Text(category.name)
+                                .foregroundColor(.labelPrimary)
+                            Spacer()
+                            if let color = category.hexColor {
+                                Image(systemName: "circle.fill")
+                                    .foregroundColor(Color.init(hex: color))
+                            }
+                        }
+                        .tag(category)
+                    }
+                }
+                .pickerStyle(.wheel)
+                .frame(height: 100)
+                .clipped()
+            }
+        }
+    }
+    
     var deleteButton: some View {
         Button (
             action: {
@@ -199,11 +254,12 @@ struct TodoItemDetailsView: View {
 
 #Preview {
     TodoItemDetailsView(
-            task: TodoItem(
-                text: "text",
-                importance: .usual,
-                deadline: Date(),
-                dateOfChange: nil
+        task: TodoItem(
+            text: "text",
+            importance: .usual,
+            deadline: Date(),
+            dateOfChange: nil,
+            category: nil
         )
     )
 }

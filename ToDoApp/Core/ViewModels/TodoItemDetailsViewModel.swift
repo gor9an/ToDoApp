@@ -12,12 +12,18 @@ class TodoItemDetailsViewModel: ObservableObject {
     var fileCache = FileCache()
     @Published var task: TodoItem
     @Published var isDeadlineEnabled: Bool = false
+    @Published var todoItemCategory: TodoItem.Category?
+    var todoItemCategories: [TodoItem.Category] = [
+        .init(name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor),
+        .init(name: TodoItemCategory.studyName, hexColor: TodoItemCategory.studyHexColor),
+        .init(name: TodoItemCategory.hobbyName, hexColor: TodoItemCategory.hobbyHexColor),
+        .init(name: TodoItemCategory.otherName, hexColor: TodoItemCategory.otherHexColor),
+    ]
     
     init(task: TodoItem) {
         self.task = task
         fileCache.fetchTodoItems()
     }
-    
     
     func saveTask() {
         fileCache.addNewTask(task)
@@ -44,6 +50,10 @@ class TodoItemDetailsViewModel: ObservableObject {
     
     func setDeadline(deadline: Date?) {
         task.deadline = deadline
+    }
+    
+    func setCategory(category: TodoItem.Category) {
+        task.category = category
     }
 }
 

@@ -19,7 +19,7 @@ class TodoListViewModel: ObservableObject {
     }
     
     var newTask: TodoItem {
-        TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil)
+        TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil, category: nil)
     }
     
     func refreshData() {
@@ -40,7 +40,7 @@ class TodoListViewModel: ObservableObject {
     func toggleTaskCompletion(task: TodoItem) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks[index].isDone.toggle()
-            fileCache.addNewTask(task)
+            fileCache.addNewTask(tasks[index])
             save()
         }
     }

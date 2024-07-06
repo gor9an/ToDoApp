@@ -21,25 +21,27 @@ final class DateCell: UICollectionViewCell {
     
     private func setupUI() {
         contentView.addSubview(label)
-        contentView.layer.cornerRadius = 16
-        contentView.layer.borderColor = UIColor(named: "supportSeparator")?.cgColor
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 16
+        label.layer.borderColor = UIColor(named: "supportSeparator")?.cgColor
         
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.heightAnchor.constraint(equalToConstant: 70),
+            label.widthAnchor.constraint(equalToConstant: 70),
             label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
     func selectCell() {
-        contentView.backgroundColor = .backSecondary
-        contentView.layer.borderWidth = 1
+        label.backgroundColor = .backSecondary
+        label.layer.borderWidth = 1
     }
     
     func deselectCell() {
-        contentView.backgroundColor = .clear
-        contentView.layer.borderWidth = 0
+        label.backgroundColor = .clear
+        label.layer.borderWidth = 0
     }
     
     func configure(with date: String) {
