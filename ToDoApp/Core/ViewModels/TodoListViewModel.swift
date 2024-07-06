@@ -6,47 +6,42 @@
 //
 
 import Foundation
+import SwiftUI
 
 class TodoListViewModel: ObservableObject {
+    var fileCache = FileCache()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
     
     init() {
-        loadTasks()
+        fileCache.fetchTodoItems()
+        self.tasks = fileCache.todoItems.map { $0.value }
     }
     
-    func loadTasks() {
-        tasks = [
-            TodoItem(text: "Купить сыр", importance: .usual, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Сделать пиццу", importance: .important, deadline: nil, isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-            TodoItem(text: "Задание", importance: .usual, deadline: Date(), isDone: false, dateOfCreation: Date(), dateOfChange: nil),
-        ]
-    }
     var newTask: TodoItem {
-        TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil)
+        TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil, category: nil)
     }
     
-    func addTask(text: String, importance: TodoItem.Importance, deadline: Date?) {
-        let newTask = TodoItem(
-            text: text,
-            importance: importance,
-            deadline: deadline,
-            dateOfChange: nil
-        )
-        tasks.append(newTask)
+    func refreshData() {
+        fileCache.fetchTodoItems()
+        self.tasks = fileCache.todoItems.map { $0.value }
     }
     
-    func changeTask(text: String, importance: TodoItem.Importance, deadline: Date?) {
-        
+    func save() {
+        fileCache.saveTodoItems()
     }
     
     func deleteTask(task: TodoItem) {
         tasks.removeAll { $0.id == task.id }
+        fileCache.deleteTask(id: task.id)
+        save()
     }
     
     func toggleTaskCompletion(task: TodoItem) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks[index].isDone.toggle()
+            fileCache.addNewTask(tasks[index])
+            save()
         }
     }
     

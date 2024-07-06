@@ -22,7 +22,7 @@ final class FileCache {
     }
     
     @discardableResult
-    func delTask(id: String) -> TodoItem? {
+    func deleteTask(id: String) -> TodoItem? {
         return todoItems.removeValue(forKey: id)
     }
     
@@ -40,6 +40,7 @@ final class FileCache {
                     return
                 }
                 
+                todoItems = [String: TodoItem]()
                 for items in dictionary {
                     guard let item = TodoItem.parse(json: items) else {
                         print("fetchTodoItems() - parse error")

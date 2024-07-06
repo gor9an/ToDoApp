@@ -16,6 +16,7 @@ struct TodoItem: Equatable, Identifiable {
     var isDone: Bool
     let dateOfCreation: Date
     var dateOfChange: Date?
+    var category: Category?
     
     // MARK: Init
     init(
@@ -25,7 +26,8 @@ struct TodoItem: Equatable, Identifiable {
         deadline: Date?,
         isDone: Bool = false,
         dateOfCreation: Date = Date(),
-        dateOfChange: Date?
+        dateOfChange: Date?,
+        category: Category?
     ) {
         if id == "" {
             self.id = UUID().uuidString
@@ -38,6 +40,7 @@ struct TodoItem: Equatable, Identifiable {
         self.isDone = isDone
         self.dateOfCreation = dateOfCreation
         self.dateOfChange = dateOfChange
+        self.category = category
     }
     
     // MARK: Importance enum
@@ -45,5 +48,16 @@ struct TodoItem: Equatable, Identifiable {
         case unimportant
         case usual
         case important
+    }
+    
+    struct Category: Identifiable, Hashable {
+        let id = UUID().uuidString
+        let name: String
+        let hexColor: String?
+        
+        enum PropertyName: String {
+            case name
+            case hexColor
+        }
     }
 }

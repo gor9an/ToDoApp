@@ -6,30 +6,33 @@
 //
 
 import Foundation
+import SwiftUI
 
 class TodoItemDetailsViewModel: ObservableObject {
+    var fileCache = FileCache()
     @Published var task: TodoItem
     @Published var isDeadlineEnabled: Bool = false
-    private var todoListViewModel: TodoListViewModel
+    @Published var todoItemCategory: TodoItem.Category?
+    var todoItemCategories: [TodoItem.Category] = [
+        .init(name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor),
+        .init(name: TodoItemCategory.studyName, hexColor: TodoItemCategory.studyHexColor),
+        .init(name: TodoItemCategory.hobbyName, hexColor: TodoItemCategory.hobbyHexColor),
+        .init(name: TodoItemCategory.otherName, hexColor: TodoItemCategory.otherHexColor),
+    ]
     
-    init(task: TodoItem, todoListViewModel: TodoListViewModel) {
+    init(task: TodoItem) {
         self.task = task
-        self.todoListViewModel = todoListViewModel
-        
-        self.isDeadlineEnabled = task.deadline != nil
+        fileCache.fetchTodoItems()
     }
     
-    
     func saveTask() {
-        if let index = todoListViewModel.tasks.firstIndex(where: { $0.id == task.id }) {
-            todoListViewModel.tasks[index] = task
-        } else {
-            todoListViewModel.tasks.append(task)
-        }
+        fileCache.addNewTask(task)
+        fileCache.saveTodoItems()
     }
     
     func deleteTask() {
-        todoListViewModel.tasks.removeAll { $0.id == task.id }
+        fileCache.deleteTask(id: task.id)
+        fileCache.saveTodoItems()
     }
     
     func toggleDeadline() {
@@ -47,6 +50,10 @@ class TodoItemDetailsViewModel: ObservableObject {
     
     func setDeadline(deadline: Date?) {
         task.deadline = deadline
+    }
+    
+    func setCategory(category: TodoItem.Category) {
+        task.category = category
     }
 }
 
