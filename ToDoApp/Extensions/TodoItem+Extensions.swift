@@ -109,13 +109,13 @@ extension TodoItem {
         if let dateOfChange { dateOfChangeString = formatter.string(from: dateOfChange) }
         let dateOfCreationString = formatter.string(from: dateOfCreation)
         
-        return "\(id),\(text),\(importanceString),\(deadlineString),\(isDone),\(dateOfCreationString),\(dateOfChangeString),\(category?.id ?? ""),\(category?.name ?? ""),\(category?.hexColor ?? "")"
+        return "\(id),\(text),\(importanceString),\(deadlineString),\(isDone),\(dateOfCreationString),\(dateOfChangeString),\(category?.name ?? ""),\(category?.hexColor ?? "")"
     }
     
     static func parse(csv: String) -> TodoItem? {
         let formatter = JsonDateFormatter.standard
         let values = csv.components(separatedBy: ",")
-        guard values.count == 7 else { return nil }
+        guard values.count == 9 else { return nil }
         
         let id = values[0]
         let text = values[1]

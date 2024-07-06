@@ -20,7 +20,8 @@ final class FileCacheTests: XCTestCase {
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         let secondToDoItem = TodoItem(
             id: UUID().uuidString,
@@ -29,7 +30,8 @@ final class FileCacheTests: XCTestCase {
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
@@ -50,12 +52,13 @@ final class FileCacheTests: XCTestCase {
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
         cache.addNewTask(toDoItem)
-        cache.delTask(id: toDoItem.id)
+        cache.deleteTask(id: toDoItem.id)
         
         //then
         XCTAssertTrue(cache.todoItems.count == 0)
@@ -71,7 +74,8 @@ final class FileCacheTests: XCTestCase {
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         let secondToDoItem = TodoItem(
             id: UUID().uuidString,
@@ -80,7 +84,8 @@ final class FileCacheTests: XCTestCase {
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
@@ -88,8 +93,8 @@ final class FileCacheTests: XCTestCase {
         cache.addNewTask(secondToDoItem)
         cache.saveTodoItems(to: "new.json")
         
-        cache.delTask(id: firstToDoItem.id)
-        cache.delTask(id: secondToDoItem.id)
+        cache.deleteTask(id: firstToDoItem.id)
+        cache.deleteTask(id: secondToDoItem.id)
         XCTAssertTrue(cache.todoItems.count == 0)
         cache.fetchTodoItems(from: "new.json")
         

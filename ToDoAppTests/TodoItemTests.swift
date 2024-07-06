@@ -20,7 +20,10 @@ final class TodoItemTests: XCTestCase {
             deadline: someDate,
             isDone: true,
             dateOfCreation: someDate,
-            dateOfChange: someDate
+            dateOfChange: someDate,
+            category: TodoItem.Category(
+                name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor
+            )
         )
         
         //when
@@ -74,7 +77,8 @@ final class TodoItemTests: XCTestCase {
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreationItem,
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
@@ -93,6 +97,7 @@ final class TodoItemTests: XCTestCase {
               let jsonId = json?["id"] as? String,
               let jsonText = json?["text"] as? String,
               let jsonIsDone = json?["isDone"] as? Bool
+                
         else {
             XCTFail()
             return
@@ -128,7 +133,10 @@ final class TodoItemTests: XCTestCase {
             deadline: someDate,
             isDone: true,
             dateOfCreation: someDate,
-            dateOfChange: someDate
+            dateOfChange: someDate,
+            category: TodoItem.Category(
+                name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor
+            )
         )
         
         //when
@@ -168,7 +176,8 @@ final class TodoItemTests: XCTestCase {
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
@@ -208,7 +217,10 @@ final class TodoItemTests: XCTestCase {
             deadline: someDate,
             isDone: true,
             dateOfCreation: someDate,
-            dateOfChange: someDate
+            dateOfChange: someDate,
+            category: TodoItem.Category(
+                name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor
+            )
         )
         
         //when
@@ -233,7 +245,8 @@ final class TodoItemTests: XCTestCase {
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
@@ -258,7 +271,10 @@ final class TodoItemTests: XCTestCase {
             deadline: someDate,
             isDone: true,
             dateOfCreation: someDate,
-            dateOfChange: someDate
+            dateOfChange: someDate,
+            category: TodoItem.Category(
+                name: TodoItemCategory.workName, hexColor: TodoItemCategory.workHexColor
+            )
         )
         
         //when
@@ -300,7 +316,8 @@ final class TodoItemTests: XCTestCase {
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,
-            dateOfChange: nil
+            dateOfChange: nil,
+            category: nil
         )
         
         //when
