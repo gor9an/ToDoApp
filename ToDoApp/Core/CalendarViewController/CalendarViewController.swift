@@ -173,7 +173,7 @@ final class CalendarViewController: UIViewController {
                 datesString.append(current)
             }
         }
-        if dates.count != todoItems.count {
+        if dates.count != todoItems.count && !datesString.contains("Другое") {
             datesString.append("Другое")
         }
     }
