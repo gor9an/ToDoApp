@@ -100,6 +100,14 @@ final class CalendarViewController: UIViewController {
             collectionView.heightAnchor.constraint(equalToConstant: 90)
         ])
     }
+    private func updateCollectionView() {
+        collectionView.reloadData()
+        collectionView.selectItem(
+            at: IndexPath(row: 0, section: 0),
+            animated: true,
+            scrollPosition: .left
+        )
+    }
     
     private func configureTableView() {
         tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -166,6 +174,7 @@ final class CalendarViewController: UIViewController {
     
     private func fetchDates() {
         dates = Array(Set(todoItems.compactMap { $0.deadline })).sorted()
+        datesString = [String]()
         
         for date in dates {
             let current = formatter.string(from: date)
@@ -218,6 +227,7 @@ extension CalendarViewController {
             .onDisappear {
                 self.fetchTodoItems()
                 self.tableView.reloadData()
+                self.updateCollectionView()
             }
         let hostingController = UIHostingController(rootView: todoItemDetailsView)
         hostingController.modalPresentationStyle = .popover
