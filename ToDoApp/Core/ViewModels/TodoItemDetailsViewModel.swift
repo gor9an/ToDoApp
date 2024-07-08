@@ -5,10 +5,9 @@
 //  Created by Andrey Gordienko on 25.06.2024.
 //
 
-import Foundation
 import SwiftUI
 
-class TodoItemDetailsViewModel: ObservableObject {
+final class TodoItemDetailsViewModel: ObservableObject {
     var fileCache = FileCache()
     @Published var task: TodoItem
     @Published var isDeadlineEnabled: Bool = false

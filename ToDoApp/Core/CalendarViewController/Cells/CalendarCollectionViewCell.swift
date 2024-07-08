@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DateCell: UICollectionViewCell {
+final class CalendarCollectionViewCell: UICollectionViewCell {
     private let label = UILabel()
     
     override init(frame: CGRect) {

@@ -5,17 +5,17 @@
 //  Created by Andrey Gordienko on 28.06.2024.
 //
 
-import Foundation
 import SwiftUI
 
-class TodoListViewModel: ObservableObject {
+final class TodoListViewModel: ObservableObject {
     var fileCache = FileCache()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
     
     init() {
         fileCache.fetchTodoItems()
-        self.tasks = fileCache.todoItems.map { $0.value }
+        tasks = fileCache.todoItems.map { $0.value }
+        sortTasksByDeadline()
     }
     
     var newTask: TodoItem {
@@ -24,7 +24,8 @@ class TodoListViewModel: ObservableObject {
     
     func refreshData() {
         fileCache.fetchTodoItems()
-        self.tasks = fileCache.todoItems.map { $0.value }
+        tasks = fileCache.todoItems.map { $0.value }
+        sortTasksByDeadline()
     }
     
     func save() {
@@ -47,6 +48,19 @@ class TodoListViewModel: ObservableObject {
     
     var filteredTasks: [TodoItem] {
         tasks.filter { showCompletedTasks || !$0.isDone }
+    }
+    
+    func sortTasksByDeadline() {
+        tasks.sort(by: {
+            guard let first = $0.deadline else {
+                return false
+            }
+            guard let second = $1.deadline else {
+                return true
+            }
+            
+            return first < second
+        })
     }
     
     func toggleShowCompletedTasks() {

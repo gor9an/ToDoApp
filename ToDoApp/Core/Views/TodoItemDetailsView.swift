@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct TodoItemDetailsView: View {
-    @State var datePickerShow = false
+    @State private var datePickerShow = false
     @State private var categoryPickerShow = false
-    @ObservedObject var viewModel: TodoItemDetailsViewModel
+    @ObservedObject private var viewModel: TodoItemDetailsViewModel
     
     @Environment(\.dismiss)
-    var dismiss
+    private var dismiss
     @Environment(\.horizontalSizeClass)
-    var horizontalSizeClass
+    private var horizontalSizeClass
     @Environment(\.verticalSizeClass)
-    var verticalSizeClass
+    private var verticalSizeClass
     
     init(task: TodoItem) {
         self.viewModel = TodoItemDetailsViewModel(task: task)
@@ -65,7 +65,7 @@ struct TodoItemDetailsView: View {
         }
     }
     
-    var saveButton: some View {
+    private var saveButton: some View {
         
         Button(action: {
             viewModel.saveTask()
@@ -77,7 +77,7 @@ struct TodoItemDetailsView: View {
         .disabled(viewModel.task.text == "")
     }
     
-    var dismissButton: some View {
+    private var dismissButton: some View {
         Button(
             action: {
                 dismiss()
@@ -88,7 +88,7 @@ struct TodoItemDetailsView: View {
         )
     }
     
-    var todoTextEditor: some View {
+    private var todoTextEditor: some View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $viewModel.task.text)
                 .frame(minHeight: 120)
@@ -107,7 +107,7 @@ struct TodoItemDetailsView: View {
     }
     
     
-    var importancePicker: some View {
+    private var importancePicker: some View {
         HStack(alignment: .center) {
             Text("Важность")
                 .padding()
@@ -130,7 +130,7 @@ struct TodoItemDetailsView: View {
         }
     }
     
-    var deadlineToggle: some View {
+    private var deadlineToggle: some View {
         Toggle(isOn: Binding(
             get: { viewModel.isDeadlineEnabled },
             set: { _ in
@@ -168,7 +168,7 @@ struct TodoItemDetailsView: View {
         
     }
     
-    var deadlineDatePicker: some View {
+    private var deadlineDatePicker: some View {
         DatePicker(
             "",
             selection: Binding(
@@ -191,7 +191,9 @@ struct TodoItemDetailsView: View {
                     .padding(16)
                 Spacer()
                 Button(action: {
-                    categoryPickerShow.toggle()
+                    withAnimation {
+                        categoryPickerShow.toggle()
+                    }
                 }, label: {
                     HStack {
                         Text(viewModel.task.category?.name ?? "Выберите")
@@ -233,7 +235,7 @@ struct TodoItemDetailsView: View {
         }
     }
     
-    var deleteButton: some View {
+    private var deleteButton: some View {
         Button (
             action: {
                 viewModel.deleteTask()

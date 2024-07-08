@@ -8,7 +8,7 @@
 import UIKit
 import Foundation
 
-final class TodoItemCell: UITableViewCell {
+final class CalendarTableViewViewCell: UITableViewCell {
     let label = UILabel()
     let image = UIImageView()
     private lazy var stackView: UIStackView = {
@@ -54,18 +54,19 @@ final class TodoItemCell: UITableViewCell {
     }
     
     func setLabel(for task: TodoItem) {
+        let attributeString: NSMutableAttributedString = NSMutableAttributedString(
+            string: task.text
+        )
+        
         if task.isDone {
             label.textColor = .labelTertiary
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(
-                string: task.text
-            )
             attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSRange(location: 0, length: attributeString.length))
-            label.attributedText = attributeString
         } else {
-            label.attributedText = nil
+            label.attributedText = attributeString
             label.textColor = .labelPrimary
-            label.text = task.text
         }
+        
+        label.attributedText = attributeString
     }
     
     func setCategory(for task: TodoItem) {
