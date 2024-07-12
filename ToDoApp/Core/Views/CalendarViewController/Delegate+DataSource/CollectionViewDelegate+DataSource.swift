@@ -1,5 +1,5 @@
 //
-//  CollectionViewDelegete+DataSource.swift
+//  CollectionViewDelegate+DataSource.swift
 //  ToDoApp
 //
 //  Created by Andrey Gordienko on 08.07.2024.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-//MARK: UICollectionViewDelegate
+// MARK: - UICollectionViewDelegate
 extension CalendarViewController: UICollectionViewDelegate {
 }
 
-//MARK: UICollectionViewDataSource
+// MARK: UICollectionViewDataSource
 extension CalendarViewController: UICollectionViewDataSource {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -19,14 +19,19 @@ extension CalendarViewController: UICollectionViewDataSource {
     ) -> Int {
         datesString.count
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dateCellIdentifier, for: indexPath) as! CalendarCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: dateCellIdentifier,
+            for: indexPath
+        ) as? CalendarCollectionViewCell else {
+            return UICollectionViewCell()
+        }
         let date = datesString[indexPath.row]
-        
+
         if cell.isSelected {
             cell.selectCell()
         } else {
@@ -35,7 +40,7 @@ extension CalendarViewController: UICollectionViewDataSource {
         cell.configure(with: date)
         return cell
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
@@ -51,7 +56,7 @@ extension CalendarViewController: UICollectionViewDataSource {
             animated: true
         )
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(
             at: indexPath
@@ -60,7 +65,7 @@ extension CalendarViewController: UICollectionViewDataSource {
     }
 }
 
-//MARK: UICollectionViewDelegateFlowLayout
+// MARK: UICollectionViewDelegateFlowLayout
 extension CalendarViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -69,7 +74,7 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
     ) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -78,4 +83,3 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
         CGSize(width: 80, height: 80)
     }
 }
-

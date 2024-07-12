@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct ToDoAppApp: App {
+    init() {
+        CustomLogger.setup()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

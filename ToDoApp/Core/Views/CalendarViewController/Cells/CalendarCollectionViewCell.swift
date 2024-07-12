@@ -9,22 +9,22 @@ import UIKit
 
 final class CalendarCollectionViewCell: UICollectionViewCell {
     private let label = UILabel()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupUI() {
         contentView.addSubview(label)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 16
         label.layer.borderColor = UIColor(named: "supportSeparator")?.cgColor
-        
+
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.heightAnchor.constraint(equalToConstant: 70),
@@ -33,17 +33,17 @@ final class CalendarCollectionViewCell: UICollectionViewCell {
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
-    
+
     func selectCell() {
         label.backgroundColor = .backSecondary
         label.layer.borderWidth = 1
     }
-    
+
     func deselectCell() {
         label.backgroundColor = .clear
         label.layer.borderWidth = 0
     }
-    
+
     func configure(with date: String) {
         let formattedDate = date.split(separator: " ").joined(separator: "\n")
         label.text = formattedDate

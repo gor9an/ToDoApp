@@ -5,51 +5,53 @@
 //  Created by Andrey Gordienko on 25.06.2024.
 //
 
+import CocoaLumberjackSwift
 import SwiftUI
 
 struct TodoItemDetailsView: View {
     @State private var datePickerShow = false
     @State private var categoryPickerShow = false
     @ObservedObject private var viewModel: TodoItemDetailsViewModel
-    
+
     @Environment(\.dismiss)
     private var dismiss
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
     @Environment(\.verticalSizeClass)
     private var verticalSizeClass
-    
+
     init(task: TodoItem) {
         self.viewModel = TodoItemDetailsViewModel(task: task)
     }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     Spacer()
                     todoTextEditor
-                    
-                    if (horizontalSizeClass == .compact && verticalSizeClass == .regular) || (horizontalSizeClass == verticalSizeClass) {
+
+                    if (horizontalSizeClass == .compact
+                        && verticalSizeClass == .regular) || (horizontalSizeClass == verticalSizeClass) {
                         VStack(spacing: 0) {
                             importancePicker
                             Divider()
                                 .padding(.horizontal)
                             deadlineToggle
-                            
+
                             if datePickerShow {
                                 Divider()
                                     .padding(.horizontal)
                                 deadlineDatePicker
                             }
-                            
+
                             Divider()
                                 .padding(.horizontal)
                             categoryPickerView
                         }
                         .background(Color.backSecondary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-                        
+
                         deleteButton
                     }
                 }
@@ -62,21 +64,26 @@ struct TodoItemDetailsView: View {
             )
             .padding(.horizontal, 16)
             .background(Color.backPrimary)
+            .onAppear {
+                DDLogInfo("\(#fileID); \(#function)\nTodoItemDetailsView Appear")
+            }
+            .onDisappear {
+                DDLogInfo("\(#fileID); \(#function)\nTodoItemDetailsView Disappear")
+            }
         }
     }
-    
+
     private var saveButton: some View {
-        
+
         Button(action: {
             viewModel.saveTask()
             dismiss()
-        },
-               label: {
+        }, label: {
             Text("Cохранить")
         })
         .disabled(viewModel.task.text == "")
     }
-    
+
     private var dismissButton: some View {
         Button(
             action: {
@@ -87,7 +94,7 @@ struct TodoItemDetailsView: View {
             }
         )
     }
-    
+
     private var todoTextEditor: some View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $viewModel.task.text)
@@ -105,8 +112,7 @@ struct TodoItemDetailsView: View {
         .background(Color.backSecondary)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
-    
-    
+
     private var importancePicker: some View {
         HStack(alignment: .center) {
             Text("Важность")
@@ -129,7 +135,7 @@ struct TodoItemDetailsView: View {
             .padding(12)
         }
     }
-    
+
     private var deadlineToggle: some View {
         Toggle(isOn: Binding(
             get: { viewModel.isDeadlineEnabled },
@@ -140,16 +146,16 @@ struct TodoItemDetailsView: View {
                 }
             }
         )) {
-            VStack (alignment: .leading) {
+            VStack(alignment: .leading) {
                 Text("Сделать до")
                 if viewModel.task.deadline != nil && viewModel.isDeadlineEnabled {
-                    
+
                     Button(
                         action: {
                             withAnimation {
                                 datePickerShow.toggle()
                             }
-                            
+
                         },
                         label: {
                             Text(viewModel.task.deadline?.formatted(
@@ -165,9 +171,9 @@ struct TodoItemDetailsView: View {
             .padding(3.5)
         }
         .padding(12.5)
-        
+
     }
-    
+
     private var deadlineDatePicker: some View {
         DatePicker(
             "",
@@ -182,7 +188,7 @@ struct TodoItemDetailsView: View {
         .frame(width: 320)
         .transition(.asymmetric(insertion: .scale, removal: .opacity))
     }
-    
+
     private var categoryPickerView: some View {
         VStack {
             HStack {
@@ -207,7 +213,7 @@ struct TodoItemDetailsView: View {
                     }
                 })
             }
-            
+
             if categoryPickerShow {
                 Divider()
                     .padding(.horizontal)
@@ -234,18 +240,16 @@ struct TodoItemDetailsView: View {
             }
         }
     }
-    
+
     private var deleteButton: some View {
-        Button (
-            action: {
-                viewModel.deleteTask()
-                dismiss()
-            },
-            label: {
-                Text("Удалить")
-                    .font(.system(size: 17))
-                    .foregroundStyle(.redCustom)
-            }
+        Button(action: {
+            viewModel.deleteTask()
+            dismiss()
+        }, label: {
+            Text("Удалить")
+                .font(.system(size: 17))
+                .foregroundStyle(.redCustom)
+        }
         )
         .frame(minWidth: 0, maxWidth: .infinity)
         .padding(.vertical, 17)

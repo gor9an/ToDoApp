@@ -5,11 +5,12 @@
 //  Created by Andrey Gordienko on 03.07.2024.
 //
 
+import CocoaLumberjackSwift
 import UIKit
 import SwiftUI
 
 final class CalendarViewController: UIViewController {
-    //MARK: Private properties
+    // MARK: Private properties
     private var todoItems = [TodoItem]()
     private let fileCache = FileCache()
     
@@ -32,19 +33,26 @@ final class CalendarViewController: UIViewController {
         return formatter
     }()
     
-    //MARK: Lifecycle
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
         fetchTodoItems()
+        
+        guard todoItems.count != 0 else { return }
         updateCollectionView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        DDLogInfo("\(#fileID); \(#function)\nCalendarViewController Did Appear")
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         fileCache.saveTodoItems()
+        DDLogInfo("\(#fileID); \(#function)\nCalendarViewController Did Disappear")
     }
     
-    //MARK: Public functions
+    // MARK: Public functions
     func updateCollectionView() {
         collectionView.reloadData()
         collectionView.selectItem(
@@ -83,7 +91,7 @@ final class CalendarViewController: UIViewController {
     }
 }
 
-//MARK: Private functions
+// MARK: Private functions
 private extension CalendarViewController {
     func configureViews() {
         view.backgroundColor = .backSecondary
@@ -205,10 +213,12 @@ private extension CalendarViewController {
             }
         }
         
-        todoitemsDates["Другое"] = todoItems.compactMap{ $0.deadline == nil ? $0 : nil }
+        todoitemsDates["Другое"] = todoItems.compactMap {
+            $0.deadline == nil ? $0 : nil
+        }
     }
     
-    //MARK: Objc functions
+    // MARK: Objc functions
     @objc
     func backButtonTap() {
         dismiss(animated: true)

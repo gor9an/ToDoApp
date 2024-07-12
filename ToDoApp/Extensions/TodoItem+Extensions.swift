@@ -18,60 +18,59 @@ extension TodoItem {
         static let dateOfChangeString = "dateOfChange"
         static let categoryString = "category"
     }
-    
+
     // MARK: Parsing and collecting a JSON file
     var json: Any {
         let formatter = JsonDateFormatter.standard
-        
-        var todoItem: [String : Any] = [
+
+        var todoItem: [String: Any] = [
             Constants.idString: id,
             Constants.textString: text,
             Constants.isDoneString: isDone,
             Constants.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
         ]
-        
+
         if importance != .usual { todoItem[Constants.importanceString] = importance.rawValue }
         if let deadline { todoItem[Constants.deadlineString] = formatter.string(from: deadline) }
         if let dateOfChange { todoItem[Constants.dateOfChangeString] = formatter.string(from: dateOfChange) }
-        
+
         if let category = category {
             todoItem[Constants.categoryString] = [
                 Category.PropertyName.name.rawValue: category.name,
                 Category.PropertyName.hexColor.rawValue: category.hexColor
             ]
         }
-        
+
         return todoItem
     }
-    
+
     static func parse(json: Any) -> TodoItem? {
         let formatter = JsonDateFormatter.standard
-        guard let dictionary = json as? Dictionary<String, Any>,
+        guard let dictionary = json as? [String: Any],
               let id = dictionary[Constants.idString] as? String,
               let text = dictionary[Constants.textString] as? String,
               let isDone = dictionary[Constants.isDoneString] as? Bool,
               let creationDateString = dictionary[Constants.dateOfCreationString] as? String,
               let dateOfCreation = formatter.date(from: creationDateString)
         else { return nil }
-        
+
         var importance: Importance = .usual
-        var deadline: Date? = nil
-        var dateOfChange: Date? = nil
-        
+        var deadline: Date?
+        var dateOfChange: Date?
+
         if let importanceString = dictionary[Constants.importanceString] as? String,
-           let importanceRaw = Importance(rawValue: importanceString)
-        {
+           let importanceRaw = Importance(rawValue: importanceString) {
             importance = importanceRaw
         }
-        
+
         if let deadlineString = dictionary["deadline"] as? String {
             deadline = formatter.date(from: deadlineString)
         }
-        
+
         if let changeDateString = dictionary["dateOfChange"] as? String {
             dateOfChange = formatter.date(from: changeDateString)
         }
-        
+
         let category: Category?
         if let categoryDict = dictionary[Constants.categoryString] as? [String: Any],
            let categoryName = categoryDict[Category.PropertyName.name.rawValue] as? String,
@@ -80,7 +79,7 @@ extension TodoItem {
         } else {
             category = nil
         }
-        
+
         let todoItem = TodoItem(
             id: id,
             text: text,
@@ -91,7 +90,7 @@ extension TodoItem {
             dateOfChange: dateOfChange,
             category: category
         )
-        
+
         return todoItem
     }
 }
@@ -103,20 +102,25 @@ extension TodoItem {
         var importanceString = ""
         var deadlineString = ""
         var dateOfChangeString = ""
-        
+
         if importance != .usual { importanceString = importance.rawValue }
         if let deadline { deadlineString = formatter.string(from: deadline) }
         if let dateOfChange { dateOfChangeString = formatter.string(from: dateOfChange) }
         let dateOfCreationString = formatter.string(from: dateOfCreation)
-        
-        return "\(id),\(text),\(importanceString),\(deadlineString),\(isDone),\(dateOfCreationString),\(dateOfChangeString),\(category?.name ?? ""),\(category?.hexColor ?? "")"
+
+        return
+                """
+                \(id),\(text),\(importanceString),\(deadlineString),\(isDone),
+                \(dateOfCreationString),\(dateOfChangeString),
+                \(category?.name ?? ""),\(category?.hexColor ?? "")
+                """
     }
-    
+
     static func parse(csv: String) -> TodoItem? {
         let formatter = JsonDateFormatter.standard
         let values = csv.components(separatedBy: ",")
         guard values.count == 9 else { return nil }
-        
+
         let id = values[0]
         let text = values[1]
         var importance: Importance = .usual
@@ -128,7 +132,7 @@ extension TodoItem {
         else { return nil }
         let dateOfChange = formatter.date(from: values[6])
         let category = Category(name: values[7], hexColor: values[8])
-        
+
         let todoItem = TodoItem(
             id: id,
             text: text,
@@ -139,7 +143,7 @@ extension TodoItem {
             dateOfChange: dateOfChange,
             category: category
         )
-        
+
         return todoItem
     }
 }
