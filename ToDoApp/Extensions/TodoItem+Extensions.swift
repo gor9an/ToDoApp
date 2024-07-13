@@ -21,7 +21,7 @@ extension TodoItem {
 
     // MARK: Parsing and collecting a JSON file
     var json: Any {
-        let formatter = JsonDateFormatter.standard
+        let formatter = TodoDateFormatter.json
 
         var todoItem: [String: Any] = [
             Constants.idString: id,
@@ -45,7 +45,7 @@ extension TodoItem {
     }
 
     static func parse(json: Any) -> TodoItem? {
-        let formatter = JsonDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         guard let dictionary = json as? [String: Any],
               let id = dictionary[Constants.idString] as? String,
               let text = dictionary[Constants.textString] as? String,
@@ -98,7 +98,7 @@ extension TodoItem {
 extension TodoItem {
     // MARK: Parsing and collecting a CSV file
     var csv: String {
-        let formatter = JsonDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         var importanceString = ""
         var deadlineString = ""
         var dateOfChangeString = ""
@@ -117,7 +117,7 @@ extension TodoItem {
     }
 
     static func parse(csv: String) -> TodoItem? {
-        let formatter = JsonDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let values = csv.components(separatedBy: ",")
         guard values.count == 9 else { return nil }
 
