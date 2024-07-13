@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import TodoItemsFileCache
 
-struct TodoItem: Equatable, Identifiable {
+struct TodoItem: Equatable, Identifiable, FileCacheItem {
     // MARK: Properties
     let id: String
     var text: String
@@ -17,7 +18,7 @@ struct TodoItem: Equatable, Identifiable {
     let dateOfCreation: Date
     var dateOfChange: Date?
     var category: Category?
-    
+
     // MARK: Init
     init(
         id: String = UUID().uuidString,
@@ -42,19 +43,19 @@ struct TodoItem: Equatable, Identifiable {
         self.dateOfChange = dateOfChange
         self.category = category
     }
-    
+
     // MARK: Importance enum
     enum Importance: String, Equatable {
         case unimportant
         case usual
         case important
     }
-    
+
     struct Category: Identifiable, Hashable {
         let id = UUID().uuidString
         let name: String
         let hexColor: String?
-        
+
         enum PropertyName: String {
             case name
             case hexColor

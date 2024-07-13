@@ -11,7 +11,7 @@ import XCTest
 
 final class FileCacheTests: XCTestCase {
     func testAddNewTask() {
-        //given
+        // given
         let cache = FileCache()
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
@@ -33,17 +33,17 @@ final class FileCacheTests: XCTestCase {
             dateOfChange: nil,
             category: nil
         )
-        
-        //when
+
+        // when
         cache.addNewTask(firstToDoItem)
         cache.addNewTask(secondToDoItem)
-        
-        //then
+
+        // then
         XCTAssertTrue(cache.todoItems.count == 2)
     }
-    
+
     func testDelTask() {
-        //given
+        // given
         let cache = FileCache()
         let toDoItem = TodoItem(
             id: UUID().uuidString,
@@ -55,17 +55,17 @@ final class FileCacheTests: XCTestCase {
             dateOfChange: nil,
             category: nil
         )
-        
-        //when
+
+        // when
         cache.addNewTask(toDoItem)
         cache.deleteTask(id: toDoItem.id)
-        
-        //then
+
+        // then
         XCTAssertTrue(cache.todoItems.count == 0)
     }
-    
+
     func testFileManager() throws {
-        //given
+        // given
         let cache = FileCache()
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
@@ -87,18 +87,18 @@ final class FileCacheTests: XCTestCase {
             dateOfChange: nil,
             category: nil
         )
-        
-        //when
+
+        // when
         cache.addNewTask(firstToDoItem)
         cache.addNewTask(secondToDoItem)
         cache.saveTodoItems(to: "new.json")
-        
+
         cache.deleteTask(id: firstToDoItem.id)
         cache.deleteTask(id: secondToDoItem.id)
         XCTAssertTrue(cache.todoItems.count == 0)
         cache.fetchTodoItems(from: "new.json")
-        
-        //then
+
+        // then
         XCTAssertTrue(cache.todoItems.count == 2)
     }
 }

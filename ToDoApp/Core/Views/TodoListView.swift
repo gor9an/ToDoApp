@@ -5,6 +5,7 @@
 //  Created by Andrey Gordienko on 27.06.2024.
 //
 
+import CocoaLumberjackSwift
 import SwiftUI
 
 struct TodoListView: View {
@@ -12,7 +13,7 @@ struct TodoListView: View {
     @State private var showDetailsView = false
     @State private var showCalendarView = false
     @State private var selectedTask: TodoItem?
-    
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -22,12 +23,20 @@ struct TodoListView: View {
             .navigationTitle("Мои дела")
             .toolbar {
                 calendarButton
+                startTestButton
+                cancelTestButton
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color.backPrimary)
+        .onAppear {
+            DDLogInfo("\(#fileID); \(#function)\nTodoListView Appear")
+        }
+        .onDisappear {
+            DDLogInfo("\(#fileID); \(#function)\nTodoListView Disappear")
+        }
     }
-    
+
     private var todoHeaderView: some View {
         HStack {
             Text("Выполнено — \(viewModel.tasks.filter { $0.isDone }.count)")
@@ -36,16 +45,16 @@ struct TodoListView: View {
             Spacer()
             Button(action: {
                 viewModel.toggleShowCompletedTasks()
-            }) {
+            }, label: {
                 Text(viewModel.showCompletedTasks ? "Скрыть" : "Показать")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.blueCustom)
-            }
+            })
         }
         .textCase(nil)
         .padding(.bottom, 12)
     }
-    
+
     private var calendarButton: some View {
         Button(action: {
             showCalendarView = true
@@ -60,14 +69,30 @@ struct TodoListView: View {
                 })
         })
     }
-    
+
+    private var startTestButton: some View {
+        Button(action: {
+            viewModel.testLoader.startTask()
+        }, label: {
+            Image(systemName: "play")
+        })
+    }
+
+    private var cancelTestButton: some View {
+        Button(action: {
+            viewModel.testLoader.cancelTask()
+        }, label: {
+            Image(systemName: "x.circle")
+        })
+    }
+
     private var todoList: some View {
         List {
             Section {
                 ForEach(viewModel.filteredTasks) { task in
                     todoListCell(with: task)
                 }
-                
+
                 Button(
                     action: {
                         showDetailsView.toggle()
@@ -90,8 +115,7 @@ struct TodoListView: View {
                     viewModel.refreshData()
                 })
         }
-        .sheet(item: $selectedTask) {
-            task in
+        .sheet(item: $selectedTask) {task in
             TodoItemDetailsView(task: task)
                 .onDisappear(perform: {
                     viewModel.refreshData()
@@ -99,7 +123,7 @@ struct TodoListView: View {
         }
         .listStyle(InsetGroupedListStyle())
     }
-    
+
     private func todoListCell(with task: TodoItem) -> some View {
         HStack(alignment: .center) {
             completionIconView(for: task)
@@ -109,32 +133,32 @@ struct TodoListView: View {
             }
             taskDetailsView(for: task)
             Spacer()
-            
+
             Button(action: {
                 selectedTask = task
-            }) {
+            }, label: {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
-            }
-            
+            })
+
         }
         .listRowInsets(EdgeInsets())
         .padding(16)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button() {
+            Button(action: {
                 viewModel.deleteTask(task: task)
                 viewModel.refreshData()
-            } label: {
+            }, label: {
                 Label("Удалить", systemImage: "trash")
-            }
+            })
             .tint(.redCustom)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button() {
+            Button(action: {
                 selectedTask = task
-            } label: {
+            }, label: {
                 Label("Инфо", systemImage: "info.circle")
-            }
+            })
             .sheet(item: $selectedTask, content: { task in
                 TodoItemDetailsView(task: task)
                     .onDisappear(perform: {
@@ -143,25 +167,25 @@ struct TodoListView: View {
             })
         }
         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-            Button() {
+            Button(action: {
                 viewModel.toggleTaskCompletion(task: task)
                 viewModel.refreshData()
-            } label: {
+            }, label: {
                 Label("Выполнить", systemImage: "checkmark.circle.fill")
-            }
+            })
             .tint(.greenCustom)
         }
     }
-    
+
     private var addTaskButton: some View {
         Button(action: {
             showDetailsView.toggle()
-        }) {
+        }, label: {
             Image(systemName: "plus.circle.fill")
                 .resizable()
                 .frame(width: 44, height: 44)
                 .foregroundColor(.blueCustom)
-        }
+        })
         .frame(maxHeight: .infinity, alignment: .bottom)
         .sheet(isPresented: $showDetailsView) {
             let newTask = viewModel.newTask
@@ -172,14 +196,19 @@ struct TodoListView: View {
         }
         .padding()
     }
-    
+
     private func completionIconView(for task: TodoItem) -> some View {
-        Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
-            .resizable()
-            .foregroundColor( task.isDone ? .greenCustom : task.importance == .important ? .redCustom : .supportSeparator)
-            .frame(width: 24, height: 24)
+        Image(
+            systemName: task.isDone ? "checkmark.circle.fill" : "circle"
+        )
+        .resizable()
+        .foregroundColor(
+            task.isDone ? .greenCustom
+            : task.importance == .important
+            ? .redCustom : .supportSeparator)
+        .frame(width: 24, height: 24)
     }
-    
+
     private func taskDetailsView(for task: TodoItem) -> some View {
         VStack(alignment: .leading) {
             Text(task.text)

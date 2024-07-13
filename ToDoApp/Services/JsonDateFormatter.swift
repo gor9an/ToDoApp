@@ -15,6 +15,5 @@ final class JsonDateFormatter {
         return formatter
     }()
     private init() { }
-    
-    
+
 }
