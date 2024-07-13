@@ -10,7 +10,8 @@ import SwiftUI
 import TodoItemsFileCache
 
 final class TodoListViewModel: ObservableObject {
-    var fileCache = FileCache<TodoItem>()
+    let fileCache = FileCache<TodoItem>()
+    let testLoader = TestLoader()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
 

@@ -23,6 +23,8 @@ struct TodoListView: View {
             .navigationTitle("Мои дела")
             .toolbar {
                 calendarButton
+                startTestButton
+                cancelTestButton
             }
         }
         .scrollContentBackground(.hidden)
@@ -65,6 +67,22 @@ struct TodoListView: View {
                 .onDisappear(perform: {
                     viewModel.refreshData()
                 })
+        })
+    }
+
+    private var startTestButton: some View {
+        Button(action: {
+            viewModel.testLoader.startTask()
+        }, label: {
+            Image(systemName: "play")
+        })
+    }
+
+    private var cancelTestButton: some View {
+        Button(action: {
+            viewModel.testLoader.cancelTask()
+        }, label: {
+            Image(systemName: "x.circle")
         })
     }
 
