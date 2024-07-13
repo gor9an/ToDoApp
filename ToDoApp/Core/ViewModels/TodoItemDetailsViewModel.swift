@@ -7,9 +7,10 @@
 
 import CocoaLumberjackSwift
 import SwiftUI
+import TodoItemsFileCache
 
 final class TodoItemDetailsViewModel: ObservableObject {
-    var fileCache = FileCache()
+    var fileCache = FileCache<TodoItem>()
     @Published var task: TodoItem
     @Published var isDeadlineEnabled: Bool = false
     @Published var todoItemCategory: TodoItem.Category?

@@ -7,9 +7,10 @@
 
 import CocoaLumberjackSwift
 import SwiftUI
+import TodoItemsFileCache
 
 final class TodoListViewModel: ObservableObject {
-    var fileCache = FileCache()
+    var fileCache = FileCache<TodoItem>()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
 

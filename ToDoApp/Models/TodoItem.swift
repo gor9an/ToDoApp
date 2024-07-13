@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import TodoItemsFileCache
 
-struct TodoItem: Equatable, Identifiable {
+struct TodoItem: Equatable, Identifiable, FileCacheItem {
     // MARK: Properties
     let id: String
     var text: String
