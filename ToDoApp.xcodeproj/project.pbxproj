@@ -19,6 +19,9 @@
 		B0561A242C2325B1000F93B4 /* JsonDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */; };
 		B0561A262C238957000F93B4 /* FileCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A252C238957000F93B4 /* FileCacheTests.swift */; };
 		B086E6452C41FBFF00DAED86 /* TodoItemsFileCache in Frameworks */ = {isa = PBXBuildFile; productRef = B086E6442C41FBFF00DAED86 /* TodoItemsFileCache */; };
+		B086E64D2C4206B800DAED86 /* ICancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64C2C4206B800DAED86 /* ICancellable.swift */; };
+		B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */; };
+		B086E6512C42097D00DAED86 /* CancellableStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6502C42097D00DAED86 /* CancellableStorage.swift */; };
 		B0873B2D2C3486D3001DD81E /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */; };
 		B0873B2F2C3486FA001DD81E /* CalendarVCRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */; };
 		B09A51F02C2DBF7C00384B3F /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */; };
@@ -66,6 +69,9 @@
 		B0561A1C2C22F36B000F93B4 /* TodoItemTestsJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemTestsJson.swift; sourceTree = "<group>"; };
 		B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonDateFormatter.swift; sourceTree = "<group>"; };
 		B0561A252C238957000F93B4 /* FileCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheTests.swift; sourceTree = "<group>"; };
+		B086E64C2C4206B800DAED86 /* ICancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICancellable.swift; sourceTree = "<group>"; };
+		B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
+		B086E6502C42097D00DAED86 /* CancellableStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellableStorage.swift; sourceTree = "<group>"; };
 		B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarVCRepresentable.swift; sourceTree = "<group>"; };
 		B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
@@ -187,6 +193,7 @@
 		B0561A0E2C209E4D000F93B4 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				B086E64B2C42069500DAED86 /* Concurrency */,
 				B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */,
 				B09E4A3B2C38CE680041FCE8 /* TodoItemCategory.swift */,
 				B0AEDBDB2C4166F700ED83FE /* CustomLogger.swift */,
@@ -210,6 +217,15 @@
 				B0561A252C238957000F93B4 /* FileCacheTests.swift */,
 			);
 			path = ToDoAppTests;
+			sourceTree = "<group>";
+		};
+		B086E64B2C42069500DAED86 /* Concurrency */ = {
+			isa = PBXGroup;
+			children = (
+				B086E64C2C4206B800DAED86 /* ICancellable.swift */,
+				B086E6502C42097D00DAED86 /* CancellableStorage.swift */,
+			);
+			path = Concurrency;
 			sourceTree = "<group>";
 		};
 		B0873B2B2C348690001DD81E /* CalendarViewController */ = {
@@ -268,6 +284,7 @@
 				B09F73512C2F996D00BF5962 /* Color+Extensions.swift */,
 				B09E4A3D2C38E1BB0041FCE8 /* UIColor+Extensions.swift */,
 				B0BD26F32C3EFC2600B3268B /* URLSession+Extensions.swift */,
+				B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -472,8 +489,10 @@
 				B09A51FC2C2E340A00384B3F /* TodoListViewModel.swift in Sources */,
 				B0D789982C2626AC0039E846 /* TodoItem+Extensions.swift in Sources */,
 				B0A0FD962C35B39F00BF3338 /* CalendarTableViewViewCell.swift in Sources */,
+				B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */,
 				B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */,
 				B0BD26F42C3EFC2600B3268B /* URLSession+Extensions.swift in Sources */,
+				B086E6512C42097D00DAED86 /* CancellableStorage.swift in Sources */,
 				B09E4A3E2C38E1BB0041FCE8 /* UIColor+Extensions.swift in Sources */,
 				B0A0FD932C35B37300BF3338 /* CalendarCollectionViewCell.swift in Sources */,
 				B0AEDBDC2C4166F700ED83FE /* CustomLogger.swift in Sources */,
@@ -483,6 +502,7 @@
 				B0EBC17D2C2AC00000767D6C /* TodoItemDetailsViewModel.swift in Sources */,
 				B09F73522C2F996D00BF5962 /* Color+Extensions.swift in Sources */,
 				B0561A132C209EA0000F93B4 /* TodoItem.swift in Sources */,
+				B086E64D2C4206B800DAED86 /* ICancellable.swift in Sources */,
 				B0BD26EB2C3C58A400B3268B /* CollectionViewDelegate+DataSource.swift in Sources */,
 				B0873B2D2C3486D3001DD81E /* CalendarViewController.swift in Sources */,
 				B0EBC17A2C2AB3D700767D6C /* TodoItemDetailsView.swift in Sources */,
