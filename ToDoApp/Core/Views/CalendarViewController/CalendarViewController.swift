@@ -15,24 +15,19 @@ final class CalendarViewController: UIViewController {
     private var todoItems = [TodoItem]()
     private let fileCache = FileCache<TodoItem>()
 
-    private(set) var collectionView: UICollectionView!
-    private(set) var tableView: UITableView!
-    private var addTaskButton = UIButton()
-    private let backButton = UIButton(type: .system)
+    private lazy var collectionView = UICollectionView()
+    private lazy var tableView = UITableView()
+    private lazy var addTaskButton = UIButton()
+    private lazy var backButton = UIButton(type: .system)
 
     let dateCellIdentifier = "DateCell"
     let todoCellIdentifier = "TodoItemCell"
     private var dates = [Date]()
     private(set) var datesString = [String]()
-    var todoitemsDates = [String: [TodoItem]]()
+    private(set) var todoitemsDates = [String: [TodoItem]]()
     var selected: TodoItem?
 
-    private var formatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM"
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    }()
+    private var formatter = TodoDateFormatter.calendar
 
     // MARK: Lifecycle
     override func viewDidLoad() {
@@ -67,6 +62,10 @@ final class CalendarViewController: UIViewController {
         tableView.reloadData()
     }
 
+    func tableViewReloadRows(indexPaths: [IndexPath]) {
+        tableView.reloadRows(at: indexPaths, with: .automatic)
+    }
+
     func fetchTodoItems() {
         fileCache.fetchTodoItems()
         todoItems = fileCache.todoItems.map { $0.value }.sorted(by: {
@@ -89,6 +88,26 @@ final class CalendarViewController: UIViewController {
         newTask.isDone = isDone
         fileCache.addNewTask(newTask)
         fileCache.saveTodoItems()
+    }
+
+    func toggleIsDone(indexPath: IndexPath, isDone: Bool) {
+        todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone = isDone
+    }
+
+    func scrollTableView(to index: IndexPath) {
+        tableView.scrollToRow(
+            at: index,
+            at: .top,
+            animated: true
+        )
+    }
+
+    func scrollCollectionView(to index: IndexPath) {
+        collectionView.scrollToItem(
+            at: index,
+            at: .left,
+            animated: true
+        )
     }
 }
 

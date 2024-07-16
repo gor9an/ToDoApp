@@ -50,11 +50,7 @@ extension CalendarViewController: UICollectionViewDataSource {
         ) as? CalendarCollectionViewCell else { return }
         cell.selectCell()
         let currentIndexPath = IndexPath(row: 0, section: indexPath.row)
-        tableView.scrollToRow(
-            at: currentIndexPath,
-            at: .top,
-            animated: true
-        )
+        scrollTableView(to: currentIndexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

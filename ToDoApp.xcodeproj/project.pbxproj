@@ -10,15 +10,15 @@
 		3BDCE84C342C14A5955A01A8 /* Pods_ToDoAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB843C306008A2DF35506E14 /* Pods_ToDoAppTests.framework */; };
 		7D967A2B57A91842A9C0825A /* Pods_ToDoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CAF904F587740F87E1F2FA4 /* Pods_ToDoApp.framework */; };
 		B01C5AC62C404C9500D4A3A8 /* TodoItemTestsCsv.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C5AC52C404C9500D4A3A8 /* TodoItemTestsCsv.swift */; };
+		B03365E92C42929C00E35D7A /* TodoItemsFileCache in Frameworks */ = {isa = PBXBuildFile; productRef = B03365E82C42929C00E35D7A /* TodoItemsFileCache */; };
 		B0561A002C209DDB000F93B4 /* ToDoAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05619FF2C209DDB000F93B4 /* ToDoAppApp.swift */; };
 		B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A012C209DDB000F93B4 /* ContentView.swift */; };
 		B0561A042C209DDF000F93B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0561A032C209DDF000F93B4 /* Assets.xcassets */; };
 		B0561A072C209DDF000F93B4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0561A062C209DDF000F93B4 /* Preview Assets.xcassets */; };
 		B0561A132C209EA0000F93B4 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A122C209EA0000F93B4 /* TodoItem.swift */; };
 		B0561A1D2C22F36B000F93B4 /* TodoItemTestsJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A1C2C22F36B000F93B4 /* TodoItemTestsJson.swift */; };
-		B0561A242C2325B1000F93B4 /* JsonDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */; };
+		B0561A242C2325B1000F93B4 /* TodoDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */; };
 		B0561A262C238957000F93B4 /* FileCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A252C238957000F93B4 /* FileCacheTests.swift */; };
-		B086E6452C41FBFF00DAED86 /* TodoItemsFileCache in Frameworks */ = {isa = PBXBuildFile; productRef = B086E6442C41FBFF00DAED86 /* TodoItemsFileCache */; };
 		B086E64D2C4206B800DAED86 /* ICancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64C2C4206B800DAED86 /* ICancellable.swift */; };
 		B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */; };
 		B086E6512C42097D00DAED86 /* CancellableStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6502C42097D00DAED86 /* CancellableStorage.swift */; };
@@ -68,7 +68,7 @@
 		B0561A122C209EA0000F93B4 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 		B0561A1A2C22F36B000F93B4 /* ToDoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0561A1C2C22F36B000F93B4 /* TodoItemTestsJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemTestsJson.swift; sourceTree = "<group>"; };
-		B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonDateFormatter.swift; sourceTree = "<group>"; };
+		B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDateFormatter.swift; sourceTree = "<group>"; };
 		B0561A252C238957000F93B4 /* FileCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheTests.swift; sourceTree = "<group>"; };
 		B086E64C2C4206B800DAED86 /* ICancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICancellable.swift; sourceTree = "<group>"; };
 		B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
@@ -102,7 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B086E6452C41FBFF00DAED86 /* TodoItemsFileCache in Frameworks */,
+				B03365E92C42929C00E35D7A /* TodoItemsFileCache in Frameworks */,
 				B0BD26F02C3D3B0900B3268B /* CocoaLumberjackSwift in Frameworks */,
 				B0BD26F22C3D3B0900B3268B /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B0BD26EE2C3D3B0900B3268B /* CocoaLumberjack in Frameworks */,
@@ -196,7 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				B086E64B2C42069500DAED86 /* Concurrency */,
-				B0561A232C2325B1000F93B4 /* JsonDateFormatter.swift */,
+				B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */,
 				B09E4A3B2C38CE680041FCE8 /* TodoItemCategory.swift */,
 				B0AEDBDB2C4166F700ED83FE /* CustomLogger.swift */,
 			);
@@ -332,7 +332,7 @@
 				B0BD26ED2C3D3B0900B3268B /* CocoaLumberjack */,
 				B0BD26EF2C3D3B0900B3268B /* CocoaLumberjackSwift */,
 				B0BD26F12C3D3B0900B3268B /* CocoaLumberjackSwiftLogBackend */,
-				B086E6442C41FBFF00DAED86 /* TodoItemsFileCache */,
+				B03365E82C42929C00E35D7A /* TodoItemsFileCache */,
 			);
 			productName = ToDoApp;
 			productReference = B05619FC2C209DDB000F93B4 /* ToDoApp.app */;
@@ -513,7 +513,7 @@
 				B09A51F02C2DBF7C00384B3F /* TodoListView.swift in Sources */,
 				B0561A002C209DDB000F93B4 /* ToDoAppApp.swift in Sources */,
 				B09E4A3C2C38CE680041FCE8 /* TodoItemCategory.swift in Sources */,
-				B0561A242C2325B1000F93B4 /* JsonDateFormatter.swift in Sources */,
+				B0561A242C2325B1000F93B4 /* TodoDateFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -815,7 +815,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B086E6442C41FBFF00DAED86 /* TodoItemsFileCache */ = {
+		B03365E82C42929C00E35D7A /* TodoItemsFileCache */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B086E6432C41FBFF00DAED86 /* XCRemoteSwiftPackageReference "TodoItemsFileCache" */;
 			productName = TodoItemsFileCache;

@@ -20,11 +20,7 @@ extension CalendarViewController: UITableViewDelegate {
         guard let indexPath = tableView.indexPathsForVisibleRows?.first  else { return }
         let topSection = indexPath.section
         let index = IndexPath(row: topSection, section: 0)
-        collectionView.scrollToItem(
-            at: index,
-            at: .left,
-            animated: true
-        )
+        scrollCollectionView(to: index)
     }
 
     func tableView(
@@ -35,11 +31,11 @@ extension CalendarViewController: UITableViewDelegate {
         let value = indexPath.row
 
         selected = todoitemsDates[key]?[value]
-        todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone = true
+        toggleIsDone(indexPath: indexPath, isDone: true)
 
         let action = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, boolValue in
             self?.updateTask(selectedTask: self?.selected, isDone: true)
-            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            self?.tableViewReloadRows(indexPaths: [indexPath])
             boolValue(true)
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
@@ -55,11 +51,11 @@ extension CalendarViewController: UITableViewDelegate {
         let value = indexPath.row
 
         selected = todoitemsDates[key]?[value]
-        todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone = false
+        toggleIsDone(indexPath: indexPath, isDone: false)
 
         let action = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, boolValue in
             self?.updateTask(selectedTask: self?.selected, isDone: false)
-            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            self?.tableViewReloadRows(indexPaths: [indexPath])
             boolValue(true)
         }
         action.image = UIImage(systemName: "circle")
