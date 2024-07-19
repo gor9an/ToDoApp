@@ -16,7 +16,7 @@ final class FileCacheTests: XCTestCase {
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
@@ -26,7 +26,7 @@ final class FileCacheTests: XCTestCase {
         let secondToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
@@ -48,7 +48,7 @@ final class FileCacheTests: XCTestCase {
         let toDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
@@ -70,7 +70,7 @@ final class FileCacheTests: XCTestCase {
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),
@@ -80,7 +80,7 @@ final class FileCacheTests: XCTestCase {
         let secondToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             isDone: true,
             dateOfCreation: Date(),

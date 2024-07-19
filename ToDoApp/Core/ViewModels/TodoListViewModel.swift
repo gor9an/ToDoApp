@@ -24,7 +24,7 @@ final class TodoListViewModel: ObservableObject {
     var newTask: TodoItem {
         let item = TodoItem(
             text: "",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             dateOfChange: nil,
             category: nil

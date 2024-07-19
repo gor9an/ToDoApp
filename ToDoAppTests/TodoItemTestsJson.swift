@@ -33,8 +33,8 @@ final class TodoItemTestsJson: XCTestCase {
 
         if let importanceString = json?["importance"] as? String {
             jsonImportance = importanceString
-            ==  "important" ? TodoItem.Importance.important : TodoItem.Importance.unimportant
-        } else { jsonImportance = TodoItem.Importance.usual }
+            ==  "important" ? TodoItem.Importance.important : TodoItem.Importance.low
+        } else { jsonImportance = TodoItem.Importance.basic }
 
         guard let deadline = json?["deadline"] as? String?,
               let dateOfCreation = json?["dateOfCreation"] as? String?,
@@ -87,8 +87,8 @@ final class TodoItemTestsJson: XCTestCase {
 
         if let importanceString = json?["importance"] as? String {
             jsonImportance = importanceString
-            == "important" ? TodoItem.Importance.important : TodoItem.Importance.unimportant
-        } else { jsonImportance = TodoItem.Importance.usual }
+            == "important" ? TodoItem.Importance.important : TodoItem.Importance.low
+        } else { jsonImportance = TodoItem.Importance.basic }
 
         guard let deadline = json?["deadline"] as? String?,
               let dateOfCreation = json?["dateOfCreation"] as? String?,

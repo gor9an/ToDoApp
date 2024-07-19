@@ -123,8 +123,8 @@ struct TodoItemDetailsView: View {
             }, set: {
                 viewModel.setImportance(importance: $0)
             })) {
-                Image(systemName: "arrow.down").tag(TodoItem.Importance.usual)
-                Text("нет").tag(TodoItem.Importance.unimportant)
+                Image(systemName: "arrow.down").tag(TodoItem.Importance.basic)
+                Text("нет").tag(TodoItem.Importance.low)
                 Image(systemName: "exclamationmark.2")
                     .symbolRenderingMode(.palette)
                     .foregroundColor(.redCustom)
@@ -262,7 +262,7 @@ struct TodoItemDetailsView: View {
     TodoItemDetailsView(
         task: TodoItem(
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: Date(),
             dateOfChange: nil,
             category: nil

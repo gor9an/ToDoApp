@@ -46,8 +46,8 @@ struct TodoItem: Equatable, Identifiable, FileCacheItem {
 
     // MARK: Importance enum
     enum Importance: String, Equatable {
-        case unimportant
-        case usual
+        case low
+        case basic
         case important
     }
 

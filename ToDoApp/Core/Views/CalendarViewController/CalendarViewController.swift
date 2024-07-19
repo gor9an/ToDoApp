@@ -253,7 +253,7 @@ private extension CalendarViewController {
 // MARK: DetailsView
 extension CalendarViewController {
     private func performTodoItemDetailsView() {
-        let newTask = TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil, category: nil)
+        let newTask = TodoItem(text: "", importance: .basic, deadline: nil, dateOfChange: nil, category: nil)
         let todoItemDetailsView = TodoItemDetailsView(task: newTask)
             .onDisappear {
                 self.fetchTodoItems()

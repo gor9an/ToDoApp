@@ -30,7 +30,7 @@ extension TodoItem {
             Constants.dateOfCreationString: "\(formatter.string(from: dateOfCreation))"
         ]
 
-        if importance != .usual { todoItem[Constants.importanceString] = importance.rawValue }
+        if importance != .basic { todoItem[Constants.importanceString] = importance.rawValue }
         if let deadline { todoItem[Constants.deadlineString] = formatter.string(from: deadline) }
         if let dateOfChange { todoItem[Constants.dateOfChangeString] = formatter.string(from: dateOfChange) }
 
@@ -54,7 +54,7 @@ extension TodoItem {
               let dateOfCreation = formatter.date(from: creationDateString)
         else { return nil }
 
-        var importance: Importance = .usual
+        var importance: Importance = .basic
         var deadline: Date?
         var dateOfChange: Date?
 
@@ -103,7 +103,7 @@ extension TodoItem {
         var deadlineString = ""
         var dateOfChangeString = ""
 
-        if importance != .usual { importanceString = importance.rawValue }
+        if importance != .basic { importanceString = importance.rawValue }
         if let deadline { deadlineString = formatter.string(from: deadline) }
         if let dateOfChange { dateOfChangeString = formatter.string(from: dateOfChange) }
         let dateOfCreationString = formatter.string(from: dateOfCreation)
@@ -123,7 +123,7 @@ extension TodoItem {
 
         let id = values[0]
         let text = values[1]
-        var importance: Importance = .usual
+        var importance: Importance = .basic
         if let importanceRaw = Importance(rawValue: values[2]) { importance = importanceRaw }
         let deadline = formatter.date(from: values[3])
         guard
