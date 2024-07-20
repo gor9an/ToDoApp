@@ -15,16 +15,10 @@ final class TodoListViewModel: ObservableObject {
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
 
-    init() {
-        fileCache.fetchTodoItems()
-        tasks = fileCache.todoItems.map { $0.value }
-        sortTasksByDeadline()
-    }
-
     var newTask: TodoItem {
         let item = TodoItem(
             text: "",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             dateOfChange: nil,
             category: nil
@@ -34,23 +28,44 @@ final class TodoListViewModel: ObservableObject {
         return item
     }
 
-    func refreshData() {
-        fileCache.fetchTodoItems()
+    func updateTasks() {
         tasks = fileCache.todoItems.map { $0.value }
-        sortTasksByDeadline()
+    }
+
+    func saveToFileCache() {
+        fileCache.saveTodoItems()
+    }
+
+    func refreshData() async throws {
+        fileCache.todoItems = try await DefaultNetworkingService.shared.getList()
+        ?? fileCache.todoItems
 
         DDLogInfo("\(#fileID); \(#function)\nUpdated data.")
     }
 
-    func save() {
-        fileCache.saveTodoItems()
+    func save() async throws {
+        fileCache.todoItems = try await DefaultNetworkingService.shared.updateList(fileCache.todoItems)
+        ?? [String: TodoItem]()
+
         DDLogInfo("\(#fileID); \(#function)\nThe data is saved.")
+    }
+
+    func saveItem(_ task: TodoItem) async throws {
+        var newTask = task
+        newTask.isDone.toggle()
+        try await DefaultNetworkingService.shared.updateItem(newTask)
+        try await refreshData()
     }
 
     func deleteTask(task: TodoItem) {
         tasks.removeAll { $0.id == task.id }
+    }
+
+    func performDelete(task: TodoItem) async throws {
+        try await DefaultNetworkingService.shared.deleteItem(task.id)
         fileCache.deleteTask(id: task.id)
-        save()
+
+        try await save()
 
         DDLogInfo("\(#fileID); \(#function)\nDelete TodoItem with id:\(task.id).")
     }
@@ -59,7 +74,6 @@ final class TodoListViewModel: ObservableObject {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks[index].isDone.toggle()
             fileCache.addNewTask(tasks[index])
-            save()
         }
     }
 

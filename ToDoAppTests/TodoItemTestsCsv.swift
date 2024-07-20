@@ -45,7 +45,7 @@ final class TodoItemTestsCsv: XCTestCase {
         let todoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,
@@ -71,7 +71,7 @@ final class TodoItemTestsCsv: XCTestCase {
         let todoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .unimportant,
+            importance: .low,
             deadline: someDate,
             isDone: true,
             dateOfCreation: someDate,
@@ -116,7 +116,7 @@ final class TodoItemTestsCsv: XCTestCase {
         let todoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,

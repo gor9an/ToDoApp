@@ -30,9 +30,11 @@ struct TodoListView: View {
         .scrollContentBackground(.hidden)
         .background(Color.backPrimary)
         .onAppear {
+            refreshData()
             DDLogInfo("\(#fileID); \(#function)\nTodoListView Appear")
         }
         .onDisappear {
+            refreshData()
             DDLogInfo("\(#fileID); \(#function)\nTodoListView Disappear")
         }
     }
@@ -65,7 +67,7 @@ struct TodoListView: View {
             CalendarVCRepresentable()
                 .edgesIgnoringSafeArea(.all)
                 .onDisappear(perform: {
-                    viewModel.refreshData()
+                    refreshData()
                 })
         })
     }
@@ -112,13 +114,13 @@ struct TodoListView: View {
             let newTask = viewModel.newTask
             TodoItemDetailsView(task: newTask)
                 .onDisappear(perform: {
-                    viewModel.refreshData()
+                    refreshData()
                 })
         }
         .sheet(item: $selectedTask) {task in
             TodoItemDetailsView(task: task)
                 .onDisappear(perform: {
-                    viewModel.refreshData()
+                    refreshData()
                 })
         }
         .listStyle(InsetGroupedListStyle())
@@ -127,10 +129,8 @@ struct TodoListView: View {
     private func todoListCell(with task: TodoItem) -> some View {
         HStack(alignment: .center) {
             completionIconView(for: task)
-            if task.importance == .important {
-                Image(systemName: "exclamationmark.2")
-                    .foregroundColor(.redCustom)
-            }
+            if task.importance == .important { Image(systemName: "exclamationmark.2").foregroundColor(.redCustom)}
+
             taskDetailsView(for: task)
             Spacer()
 
@@ -146,34 +146,32 @@ struct TodoListView: View {
         .padding(16)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(action: {
-                viewModel.deleteTask(task: task)
-                viewModel.refreshData()
-            }, label: {
-                Label("Удалить", systemImage: "trash")
-            })
+                Task {
+                    do {
+                        try await viewModel.performDelete(task: task)
+                        await MainActor.run {
+                            viewModel.deleteTask(task: task)
+                        }
+                    } catch {
+                        DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+                    }
+                }
+
+                refreshData()
+            }, label: { Label("Удалить", systemImage: "trash") })
             .tint(.redCustom)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(action: {
-                selectedTask = task
-            }, label: {
-                Label("Инфо", systemImage: "info.circle")
-            })
+            Button(action: { selectedTask = task }, label: { Label("Инфо", systemImage: "info.circle") })
             .sheet(item: $selectedTask, content: { task in
                 TodoItemDetailsView(task: task)
                     .onDisappear(perform: {
-                        viewModel.refreshData()
+                        refreshData()
                     })
             })
         }
         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-            Button(action: {
-                viewModel.toggleTaskCompletion(task: task)
-                viewModel.refreshData()
-            }, label: {
-                Label("Выполнить", systemImage: "checkmark.circle.fill")
-            })
-            .tint(.greenCustom)
+            leadingSwipeButton(task)
         }
     }
 
@@ -191,7 +189,7 @@ struct TodoListView: View {
             let newTask = viewModel.newTask
             TodoItemDetailsView(task: newTask)
                 .onDisappear(perform: {
-                    viewModel.refreshData()
+                    refreshData()
                 })
         }
         .padding()
@@ -209,6 +207,24 @@ struct TodoListView: View {
         .frame(width: 24, height: 24)
     }
 
+    private func leadingSwipeButton(_ task: TodoItem) -> some View {
+        Button(action: {
+            viewModel.toggleTaskCompletion(task: task)
+            Task {
+                do {
+                    try await viewModel.saveItem(task)
+
+                    await MainActor.run {
+                        refreshData()
+                    }
+                } catch {
+                    DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+                }
+            }
+        }, label: { Label("Выполнить", systemImage: "checkmark.circle.fill") })
+        .tint(.greenCustom)
+    }
+
     private func taskDetailsView(for task: TodoItem) -> some View {
         VStack(alignment: .leading) {
             Text(task.text)
@@ -224,6 +240,22 @@ struct TodoListView: View {
                     .font(.caption)
                 }
                 .foregroundColor(.labelTertiary)
+            }
+        }
+    }
+
+    private func refreshData() {
+        Task {
+            do {
+                try await viewModel.refreshData()
+
+                await MainActor.run {
+                    viewModel.updateTasks()
+                    viewModel.sortTasksByDeadline()
+                    viewModel.saveToFileCache()
+                }
+            } catch {
+                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
             }
         }
     }

@@ -44,7 +44,6 @@ final class CalendarViewController: UIViewController {
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        fileCache.saveTodoItems()
         DDLogInfo("\(#fileID); \(#function)\nCalendarViewController Did Disappear")
     }
 
@@ -67,31 +66,49 @@ final class CalendarViewController: UIViewController {
     }
 
     func fetchTodoItems() {
-        fileCache.fetchTodoItems()
-        todoItems = fileCache.todoItems.map { $0.value }.sorted(by: {
-            guard let first = $0.deadline else {
-                return false
-            }
-            guard let second = $1.deadline else {
-                return true
-            }
+        Task {
+            do {
+                guard let items = try await DefaultNetworkingService.shared.getList() else { return }
+                todoItems = items.compactMap { $0.value }.sorted(by: {
+                    guard let first = $0.deadline else {
+                        return false
+                    }
+                    guard let second = $1.deadline else {
+                        return true
+                    }
 
-            return first < second
-        })
+                    return first < second
+                })
 
-        fetchDates()
-        groupTodoItemsWithDate()
+                await MainActor.run {
+                    fetchDates()
+                    groupTodoItemsWithDate()
+                    updateCollectionView()
+                    updateTableView()
+                }
+            } catch {
+                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+            }
+        }
     }
 
     func updateTask(selectedTask: TodoItem?, isDone: Bool) {
         guard var newTask = selectedTask else { return }
         newTask.isDone = isDone
-        fileCache.addNewTask(newTask)
-        fileCache.saveTodoItems()
+        Task {
+            do {
+                try await DefaultNetworkingService.shared.updateItem(newTask)
+            } catch {
+                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+            }
+        }
+
+        saveItems()
     }
 
     func toggleIsDone(indexPath: IndexPath, isDone: Bool) {
         todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone = isDone
+        saveItems()
     }
 
     func scrollTableView(to index: IndexPath) {
@@ -113,6 +130,28 @@ final class CalendarViewController: UIViewController {
 
 // MARK: Private functions
 private extension CalendarViewController {
+    func saveItems() {
+        Task {
+            do {
+                var dict = [String: TodoItem]()
+                for item in todoItems {
+                    dict[item.id] = item
+                }
+
+                guard let cache = try await DefaultNetworkingService.shared.updateList(dict) else {
+                    return
+                }
+
+                fileCache.todoItems = cache
+                fileCache.saveTodoItems()
+
+            } catch {
+                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+            }
+
+        }
+    }
+
     func configureViews() {
         view.backgroundColor = .backSecondary
         navigationItem.title = "Мои дела"
@@ -246,6 +285,7 @@ private extension CalendarViewController {
 
     @objc
     func addTaskButtonTap() {
+        saveItems()
         performTodoItemDetailsView()
     }
 }
@@ -253,7 +293,7 @@ private extension CalendarViewController {
 // MARK: DetailsView
 extension CalendarViewController {
     private func performTodoItemDetailsView() {
-        let newTask = TodoItem(text: "", importance: .usual, deadline: nil, dateOfChange: nil, category: nil)
+        let newTask = TodoItem(text: "", importance: .basic, deadline: nil, dateOfChange: nil, category: nil)
         let todoItemDetailsView = TodoItemDetailsView(task: newTask)
             .onDisappear {
                 self.fetchTodoItems()
