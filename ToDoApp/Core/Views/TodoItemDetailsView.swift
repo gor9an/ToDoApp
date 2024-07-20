@@ -76,7 +76,14 @@ struct TodoItemDetailsView: View {
     private var saveButton: some View {
 
         Button(action: {
-            viewModel.saveTask()
+            Task {
+                do {
+                    try await viewModel.saveTask()
+                } catch {
+                    DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+                }
+            }
+
             dismiss()
         }, label: {
             Text("Cохранить")
@@ -243,7 +250,14 @@ struct TodoItemDetailsView: View {
 
     private var deleteButton: some View {
         Button(action: {
-            viewModel.deleteTask()
+            Task {
+                do {
+                    try await viewModel.deleteTask()
+                } catch {
+                    DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+                }
+            }
+
             dismiss()
         }, label: {
             Text("Удалить")

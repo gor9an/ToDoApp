@@ -20,6 +20,8 @@ struct ListResponse: Decodable {
         do {
             return try await task.value
         } catch {
+            DefaultNetworkingService.shared.setIsDirty()
+
             DDLogError("\(#file); \(#function)\ninvalid decoding\n\(error.localizedDescription))")
             throw NetworkError.invalidDecoding(error.localizedDescription)
         }

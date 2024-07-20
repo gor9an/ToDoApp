@@ -7,53 +7,24 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import TodoItemsFileCache
 
 final class DefaultNetworkingService: NetworkingServiceProtocol {
     static let shared = DefaultNetworkingService(); private init() { }
     private let urlSession = URLSession.shared
     private let httpStatusCodeSuccess = 200..<300
     private var revision: Int32 = 0
+    private let fileCache = FileCache<TodoItem>()
+    private var isDirty = false
 
-    private func performRequest(request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        let (data, response) = try await urlSession.dataTask(for: request)
-        guard let response = response as? HTTPURLResponse else {
-            DDLogError("\(#file); \(#function)\nunexpected response\n\(response))")
-            throw NetworkError.unexpectedResponse(response)
-        }
-        guard httpStatusCodeSuccess.contains(response.statusCode) else {
-            DDLogError("\(#file); \(#function)\nbad response\n\(response))")
-            throw NetworkError.badResponse(response)
-        }
-
-        return (data, response)
-    }
-
-    private func sendItem(_ item: TodoItem, _ request: inout URLRequest) async throws -> TodoItem {
-        guard let networkingItemsBody = await NetworkingItem.toNetworkingItem(item)?.json else {
-            DDLogError("\(#file); \(#function)\ninvalid NetworkingItem")
-            throw NetworkError.invalidNetworkingItem
-        }
-
-        let element = ["status": "ok", "element": networkingItemsBody]
-        let json = try JSONSerialization.data(
-            withJSONObject: element
-        )
-
-        let requestBody = json
-
-        request.httpBody = requestBody
-
-        let (data, _) = try await performRequest(request: request)
-        let response = try await ElementResponse.decode(data: data)
-
-        let networkingItem = response.element
-        let todoItem = NetworkingItem.toTodoItem(networkingItem)
-
-        return todoItem
+    func setIsDirty() {
+        isDirty = true
+        fileCache.saveTodoItems()
     }
 
     func getList() async throws -> [String: TodoItem]? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
+            setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
@@ -76,8 +47,10 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
         return todoItems
     }
 
+    @discardableResult
     func updateList(_ items: [String: TodoItem]) async throws -> [String: TodoItem]? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
+            setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
@@ -112,11 +85,13 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
             todoItems[item.id] = NetworkingItem.toTodoItem(item)
         }
 
+        isDirty = false
         return todoItems
     }
 
     func getItem(_ id: String) async throws -> TodoItem? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
+            setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
@@ -137,8 +112,10 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
         return todoItems
     }
 
+    @discardableResult
     func addItem(_ item: TodoItem) async throws -> TodoItem? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
+            setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
@@ -150,8 +127,10 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
         return try await sendItem(item, &request)
     }
 
+    @discardableResult
     func updateItem(_ item: TodoItem) async throws -> TodoItem? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(item.id)") else {
+            setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
@@ -163,6 +142,7 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
         return try await sendItem(item, &request)
     }
 
+    @discardableResult
     func deleteItem(_ id: String) async throws -> TodoItem? {
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
             DDLogError("\(#file); \(#function)\nbad URl")
@@ -186,4 +166,53 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
         return todoItems
     }
 
+}
+
+private extension DefaultNetworkingService {
+    func performRequest(request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+        if isDirty { try await updateList(fileCache.todoItems) }
+        let (data, response) = try await urlSession.dataTask(for: request)
+        guard let response = response as? HTTPURLResponse else {
+            setIsDirty()
+            DDLogError("\(#file); \(#function)\nunexpected response\n\(response))")
+            throw NetworkError.unexpectedResponse(response)
+        }
+        guard httpStatusCodeSuccess.contains(response.statusCode) else {
+            DDLogError("\(#file); \(#function)\nbad response\n\(response))")
+            setIsDirty()
+            throw NetworkError.badResponse(response)
+        }
+
+        return (data, response)
+    }
+
+    func sendItem(_ item: TodoItem, _ request: inout URLRequest) async throws -> TodoItem {
+        guard let networkingItemsBody = await NetworkingItem.toNetworkingItem(item)?.json else {
+            setIsDirty()
+            DDLogError("\(#file); \(#function)\ninvalid NetworkingItem")
+            throw NetworkError.invalidNetworkingItem
+        }
+
+        let element = ["status": "ok", "element": networkingItemsBody]
+        let json = try JSONSerialization.data(
+            withJSONObject: element
+        )
+
+        let requestBody = json
+
+        request.httpBody = requestBody
+
+        let (data, _) = try await performRequest(request: request)
+        let response = try await ElementResponse.decode(data: data)
+
+        let networkingItem = response.element
+
+        if let checkRevision = response.revision {
+            revision = checkRevision
+        }
+
+        let todoItem = NetworkingItem.toTodoItem(networkingItem)
+
+        return todoItem
+    }
 }
