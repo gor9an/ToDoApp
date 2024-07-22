@@ -75,13 +75,9 @@ final class CalendarViewController: UIViewController {
                     return
                 }
                 todoItems = items.compactMap { $0.value }.sorted(by: {
-                    guard let first = $0.deadline else {
-                        return false
-                    }
-                    guard let second = $1.deadline else {
-                        return true
-                    }
-
+                    guard $0.deadline != nil || $1.deadline != nil else { return $0.text < $1.text }
+                    guard let first = $0.deadline else { return false }
+                    guard let second = $1.deadline else { return true }
                     return first < second
                 })
 
