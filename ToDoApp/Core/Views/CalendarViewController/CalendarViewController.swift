@@ -34,8 +34,6 @@ final class CalendarViewController: UIViewController {
         super.viewDidLoad()
         configureViews()
         fetchTodoItems()
-
-        guard todoItems.count != 0 else { return }
         updateCollectionView()
     }
 
@@ -49,6 +47,11 @@ final class CalendarViewController: UIViewController {
 
     // MARK: Public functions
     func updateCollectionView() {
+        guard todoItems.count != 0 else {
+            dismiss(animated: true)
+            return
+        }
+
         collectionView.reloadData()
         collectionView.selectItem(
             at: IndexPath(row: 0, section: 0),
@@ -68,7 +71,9 @@ final class CalendarViewController: UIViewController {
     func fetchTodoItems() {
         Task {
             do {
-                guard let items = try await DefaultNetworkingService.shared.getList() else { return }
+                guard let items = try await DefaultNetworkingService.shared.getList() else {
+                    return
+                }
                 todoItems = items.compactMap { $0.value }.sorted(by: {
                     guard let first = $0.deadline else {
                         return false

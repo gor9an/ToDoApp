@@ -10,7 +10,7 @@ import Foundation
 extension DefaultNetworkingService {
     struct NetworkingConstants {
         static let baseURL = URL(string: "https://hive.mrdekk.ru/todo")
-        static let bearerToken = ""
+        static let bearerToken = "Thingol"
         static let revision = "revision"
     }
 }
