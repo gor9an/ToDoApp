@@ -22,7 +22,6 @@
 		B086E64D2C4206B800DAED86 /* ICancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64C2C4206B800DAED86 /* ICancellable.swift */; };
 		B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */; };
 		B086E6512C42097D00DAED86 /* CancellableStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6502C42097D00DAED86 /* CancellableStorage.swift */; };
-		B086E6532C4215CA00DAED86 /* TestLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6522C4215CA00DAED86 /* TestLoader.swift */; };
 		B0873B2D2C3486D3001DD81E /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */; };
 		B0873B2F2C3486FA001DD81E /* CalendarVCRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */; };
 		B09A51F02C2DBF7C00384B3F /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */; };
@@ -80,7 +79,6 @@
 		B086E64C2C4206B800DAED86 /* ICancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICancellable.swift; sourceTree = "<group>"; };
 		B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
 		B086E6502C42097D00DAED86 /* CancellableStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellableStorage.swift; sourceTree = "<group>"; };
-		B086E6522C4215CA00DAED86 /* TestLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLoader.swift; sourceTree = "<group>"; };
 		B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarVCRepresentable.swift; sourceTree = "<group>"; };
 		B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
@@ -241,7 +239,6 @@
 			children = (
 				B086E64C2C4206B800DAED86 /* ICancellable.swift */,
 				B086E6502C42097D00DAED86 /* CancellableStorage.swift */,
-				B086E6522C4215CA00DAED86 /* TestLoader.swift */,
 			);
 			path = Concurrency;
 			sourceTree = "<group>";
@@ -539,7 +536,6 @@
 				B0A0FD962C35B39F00BF3338 /* CalendarTableViewViewCell.swift in Sources */,
 				B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */,
 				B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */,
-				B086E6532C4215CA00DAED86 /* TestLoader.swift in Sources */,
 				B0BD26F42C3EFC2600B3268B /* URLSession+Extensions.swift in Sources */,
 				B0D27D692C46AE2100CFFE1D /* NetworkingServiceProtocol.swift in Sources */,
 				B0AD35892C4B093100FC9312 /* ListResponse.swift in Sources */,

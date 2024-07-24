@@ -11,7 +11,6 @@ import TodoItemsFileCache
 
 final class TodoListViewModel: ObservableObject {
     let fileCache = FileCache<TodoItem>()
-    let testLoader = TestLoader()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
 
