@@ -82,6 +82,7 @@ struct TodoItemDetailsView: View {
                 } catch {
                     DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
                 }
+                viewModel.saveToFileCache()
             }
 
             dismiss()

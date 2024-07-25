@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import TodoItemsFileCache
 
 struct TodoItem: Equatable, Identifiable, FileCacheItem {
     // MARK: Properties

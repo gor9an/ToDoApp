@@ -13,11 +13,14 @@ extension URLSession {
 
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
-                let task = self.dataTask(with: urlRequest) { data, response, _ in
+                let task = self.dataTask(with: urlRequest) { data, response, error in
 
                     if Task.isCancelled {
                         continuation.resume(throwing: CancellationError())
                         return
+                    }
+                    if let error = error {
+                        return continuation.resume(throwing: error)
                     }
 
                     guard let data = data, let response = response else {

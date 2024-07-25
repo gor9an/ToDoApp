@@ -7,11 +7,9 @@
 
 import CocoaLumberjackSwift
 import SwiftUI
-import TodoItemsFileCache
 
 final class TodoListViewModel: ObservableObject {
     let fileCache = FileCache<TodoItem>()
-    let testLoader = TestLoader()
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
 
@@ -37,6 +35,7 @@ final class TodoListViewModel: ObservableObject {
     }
 
     func refreshData() async throws {
+        fileCache.fetchTodoItems()
         fileCache.todoItems = try await DefaultNetworkingService.shared.getList()
         ?? fileCache.todoItems
 
@@ -44,6 +43,7 @@ final class TodoListViewModel: ObservableObject {
     }
 
     func save() async throws {
+        fileCache.saveTodoItems()
         fileCache.todoItems = try await DefaultNetworkingService.shared.updateList(fileCache.todoItems)
         ?? [String: TodoItem]()
 
@@ -53,19 +53,22 @@ final class TodoListViewModel: ObservableObject {
     func saveItem(_ task: TodoItem) async throws {
         var newTask = task
         newTask.isDone.toggle()
+
+        fileCache.addNewTask(newTask)
+        try await save()
+
         try await DefaultNetworkingService.shared.updateItem(newTask)
         try await refreshData()
     }
 
     func deleteTask(task: TodoItem) {
         tasks.removeAll { $0.id == task.id }
+        fileCache.deleteTask(id: task.id)
+        fileCache.saveTodoItems()
     }
 
     func performDelete(task: TodoItem) async throws {
         try await DefaultNetworkingService.shared.deleteItem(task.id)
-        fileCache.deleteTask(id: task.id)
-
-        try await save()
 
         DDLogInfo("\(#fileID); \(#function)\nDelete TodoItem with id:\(task.id).")
     }

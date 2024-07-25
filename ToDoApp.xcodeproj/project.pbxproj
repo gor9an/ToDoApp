@@ -10,7 +10,6 @@
 		3BDCE84C342C14A5955A01A8 /* Pods_ToDoAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB843C306008A2DF35506E14 /* Pods_ToDoAppTests.framework */; };
 		7D967A2B57A91842A9C0825A /* Pods_ToDoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CAF904F587740F87E1F2FA4 /* Pods_ToDoApp.framework */; };
 		B01C5AC62C404C9500D4A3A8 /* TodoItemTestsCsv.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C5AC52C404C9500D4A3A8 /* TodoItemTestsCsv.swift */; };
-		B03365E92C42929C00E35D7A /* TodoItemsFileCache in Frameworks */ = {isa = PBXBuildFile; productRef = B03365E82C42929C00E35D7A /* TodoItemsFileCache */; };
 		B0561A002C209DDB000F93B4 /* ToDoAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05619FF2C209DDB000F93B4 /* ToDoAppApp.swift */; };
 		B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A012C209DDB000F93B4 /* ContentView.swift */; };
 		B0561A042C209DDF000F93B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0561A032C209DDF000F93B4 /* Assets.xcassets */; };
@@ -19,10 +18,11 @@
 		B0561A1D2C22F36B000F93B4 /* TodoItemTestsJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A1C2C22F36B000F93B4 /* TodoItemTestsJson.swift */; };
 		B0561A242C2325B1000F93B4 /* TodoDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */; };
 		B0561A262C238957000F93B4 /* FileCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0561A252C238957000F93B4 /* FileCacheTests.swift */; };
+		B074637E2C527F5C00F752FD /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B074637D2C527F5C00F752FD /* FileCache.swift */; };
+		B07463802C527F8300F752FD /* FileCacheItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B074637F2C527F8300F752FD /* FileCacheItem.swift */; };
 		B086E64D2C4206B800DAED86 /* ICancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64C2C4206B800DAED86 /* ICancellable.swift */; };
 		B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */; };
 		B086E6512C42097D00DAED86 /* CancellableStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6502C42097D00DAED86 /* CancellableStorage.swift */; };
-		B086E6532C4215CA00DAED86 /* TestLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B086E6522C4215CA00DAED86 /* TestLoader.swift */; };
 		B0873B2D2C3486D3001DD81E /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */; };
 		B0873B2F2C3486FA001DD81E /* CalendarVCRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */; };
 		B09A51F02C2DBF7C00384B3F /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */; };
@@ -77,10 +77,11 @@
 		B0561A1C2C22F36B000F93B4 /* TodoItemTestsJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemTestsJson.swift; sourceTree = "<group>"; };
 		B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDateFormatter.swift; sourceTree = "<group>"; };
 		B0561A252C238957000F93B4 /* FileCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheTests.swift; sourceTree = "<group>"; };
+		B074637D2C527F5C00F752FD /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
+		B074637F2C527F8300F752FD /* FileCacheItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheItem.swift; sourceTree = "<group>"; };
 		B086E64C2C4206B800DAED86 /* ICancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICancellable.swift; sourceTree = "<group>"; };
 		B086E64E2C42089100DAED86 /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
 		B086E6502C42097D00DAED86 /* CancellableStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellableStorage.swift; sourceTree = "<group>"; };
-		B086E6522C4215CA00DAED86 /* TestLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLoader.swift; sourceTree = "<group>"; };
 		B0873B2C2C3486D3001DD81E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		B0873B2E2C3486FA001DD81E /* CalendarVCRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarVCRepresentable.swift; sourceTree = "<group>"; };
 		B09A51EF2C2DBF7C00384B3F /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
@@ -116,7 +117,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B03365E92C42929C00E35D7A /* TodoItemsFileCache in Frameworks */,
 				B0BD26F02C3D3B0900B3268B /* CocoaLumberjackSwift in Frameworks */,
 				B0BD26F22C3D3B0900B3268B /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B0BD26EE2C3D3B0900B3268B /* CocoaLumberjack in Frameworks */,
@@ -209,6 +209,7 @@
 		B0561A0E2C209E4D000F93B4 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				B074637B2C527F3D00F752FD /* FileCache */,
 				B0D27D672C46AE1300CFFE1D /* NetworkingService */,
 				B086E64B2C42069500DAED86 /* Concurrency */,
 				B0561A232C2325B1000F93B4 /* TodoDateFormatter.swift */,
@@ -236,12 +237,28 @@
 			path = ToDoAppTests;
 			sourceTree = "<group>";
 		};
+		B074637B2C527F3D00F752FD /* FileCache */ = {
+			isa = PBXGroup;
+			children = (
+				B074637C2C527F4300F752FD /* FileCacheItem */,
+				B074637D2C527F5C00F752FD /* FileCache.swift */,
+			);
+			path = FileCache;
+			sourceTree = "<group>";
+		};
+		B074637C2C527F4300F752FD /* FileCacheItem */ = {
+			isa = PBXGroup;
+			children = (
+				B074637F2C527F8300F752FD /* FileCacheItem.swift */,
+			);
+			path = FileCacheItem;
+			sourceTree = "<group>";
+		};
 		B086E64B2C42069500DAED86 /* Concurrency */ = {
 			isa = PBXGroup;
 			children = (
 				B086E64C2C4206B800DAED86 /* ICancellable.swift */,
 				B086E6502C42097D00DAED86 /* CancellableStorage.swift */,
-				B086E6522C4215CA00DAED86 /* TestLoader.swift */,
 			);
 			path = Concurrency;
 			sourceTree = "<group>";
@@ -294,12 +311,12 @@
 			path = Responses;
 			sourceTree = "<group>";
 		};
-		B0AD358C2C4B098000FC9312 /* Protocools */ = {
+		B0AD358C2C4B098000FC9312 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
 				B0D27D682C46AE2100CFFE1D /* NetworkingServiceProtocol.swift */,
 			);
-			path = Protocools;
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		B0BD26E92C3C585300B3268B /* Delegate+DataSource */ = {
@@ -314,7 +331,7 @@
 		B0D27D672C46AE1300CFFE1D /* NetworkingService */ = {
 			isa = PBXGroup;
 			children = (
-				B0AD358C2C4B098000FC9312 /* Protocools */,
+				B0AD358C2C4B098000FC9312 /* Protocols */,
 				B0AD35872C4B092000FC9312 /* Responses */,
 				B0D27D6A2C46AE2E00CFFE1D /* DefaultNetworkingService.swift */,
 				B0D27D6C2C47026D00CFFE1D /* NetworkingConstants.swift */,
@@ -377,7 +394,6 @@
 				B0BD26ED2C3D3B0900B3268B /* CocoaLumberjack */,
 				B0BD26EF2C3D3B0900B3268B /* CocoaLumberjackSwift */,
 				B0BD26F12C3D3B0900B3268B /* CocoaLumberjackSwiftLogBackend */,
-				B03365E82C42929C00E35D7A /* TodoItemsFileCache */,
 			);
 			productName = ToDoApp;
 			productReference = B05619FC2C209DDB000F93B4 /* ToDoApp.app */;
@@ -432,7 +448,6 @@
 			mainGroup = B05619F32C209DDB000F93B4;
 			packageReferences = (
 				B0BD26EC2C3D3B0900B3268B /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
-				B086E6432C41FBFF00DAED86 /* XCRemoteSwiftPackageReference "TodoItemsFileCache" */,
 			);
 			productRefGroup = B05619FD2C209DDB000F93B4 /* Products */;
 			projectDirPath = "";
@@ -539,7 +554,6 @@
 				B0A0FD962C35B39F00BF3338 /* CalendarTableViewViewCell.swift in Sources */,
 				B086E64F2C42089100DAED86 /* URLSessionTask+Extensions.swift in Sources */,
 				B0561A022C209DDB000F93B4 /* ContentView.swift in Sources */,
-				B086E6532C4215CA00DAED86 /* TestLoader.swift in Sources */,
 				B0BD26F42C3EFC2600B3268B /* URLSession+Extensions.swift in Sources */,
 				B0D27D692C46AE2100CFFE1D /* NetworkingServiceProtocol.swift in Sources */,
 				B0AD35892C4B093100FC9312 /* ListResponse.swift in Sources */,
@@ -563,8 +577,10 @@
 				B0EBC17A2C2AB3D700767D6C /* TodoItemDetailsView.swift in Sources */,
 				B09A51F02C2DBF7C00384B3F /* TodoListView.swift in Sources */,
 				B0AD35822C4A506400FC9312 /* NetworkingItem.swift in Sources */,
+				B07463802C527F8300F752FD /* FileCacheItem.swift in Sources */,
 				B0561A002C209DDB000F93B4 /* ToDoAppApp.swift in Sources */,
 				B09E4A3C2C38CE680041FCE8 /* TodoItemCategory.swift in Sources */,
+				B074637E2C527F5C00F752FD /* FileCache.swift in Sources */,
 				B0561A242C2325B1000F93B4 /* TodoDateFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -848,14 +864,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B086E6432C41FBFF00DAED86 /* XCRemoteSwiftPackageReference "TodoItemsFileCache" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gor9an/TodoItemsFileCache.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		B0BD26EC2C3D3B0900B3268B /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
@@ -867,11 +875,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B03365E82C42929C00E35D7A /* TodoItemsFileCache */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B086E6432C41FBFF00DAED86 /* XCRemoteSwiftPackageReference "TodoItemsFileCache" */;
-			productName = TodoItemsFileCache;
-		};
 		B0BD26ED2C3D3B0900B3268B /* CocoaLumberjack */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B0BD26EC2C3D3B0900B3268B /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;

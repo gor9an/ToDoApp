@@ -7,7 +7,6 @@
 
 import CocoaLumberjackSwift
 import Foundation
-import TodoItemsFileCache
 
 final class DefaultNetworkingService: NetworkingServiceProtocol {
     static let shared = DefaultNetworkingService(); private init() { }
@@ -19,19 +18,23 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     func setIsDirty() {
         isDirty = true
-        fileCache.fetchTodoItems()
     }
 
     func getList() async throws -> [String: TodoItem]? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = NetworkingMethods.get
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
 
         let (data, _) = try await performRequest(request: request)
         let response = try await ListResponse.decode(data: data)
@@ -56,9 +59,10 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "PATCH"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(String(describing: revision), forHTTPHeaderField: "X-Last-Known-Revision")
+        request.httpMethod = NetworkingMethods.patch
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
+        request.setValue(String(describing: revision), forHTTPHeaderField: NetworkingHeaders.xLastKnownRevision)
 
         var networkingItemsBody = [NetworkingItem]()
         for item in items {
@@ -91,15 +95,20 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
     }
 
     func getItem(_ id: String) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = NetworkingMethods.get
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
 
         let (data, _) = try await performRequest(request: request)
         let response = try await ElementResponse.decode(data: data)
@@ -116,47 +125,62 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     @discardableResult
     func addItem(_ item: TodoItem) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(String(describing: revision), forHTTPHeaderField: "X-Last-Known-Revision")
+        request.httpMethod = NetworkingMethods.post
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
+        request.setValue(String(describing: revision), forHTTPHeaderField: NetworkingHeaders.xLastKnownRevision)
 
         return try await sendItem(item, &request)
     }
 
     @discardableResult
     func updateItem(_ item: TodoItem) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(item.id)") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(String(describing: revision), forHTTPHeaderField: "X-Last-Known-Revision")
+        request.httpMethod = NetworkingMethods.put
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
+        request.setValue(String(describing: revision), forHTTPHeaderField: NetworkingHeaders.xLastKnownRevision)
 
         return try await sendItem(item, &request)
     }
 
     @discardableResult
     func deleteItem(_ id: String) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
-        request.setValue( "Bearer \(NetworkingConstants.bearerToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(String(describing: revision), forHTTPHeaderField: "X-Last-Known-Revision")
+        request.httpMethod = NetworkingMethods.delete
+        request.setValue( "Bearer \(NetworkingConstants.bearerToken)",
+                          forHTTPHeaderField: NetworkingHeaders.authorization)
+        request.setValue(String(describing: revision), forHTTPHeaderField: NetworkingHeaders.xLastKnownRevision)
 
         let (data, _) = try await performRequest(request: request)
         let response = try await ElementResponse.decode(data: data)

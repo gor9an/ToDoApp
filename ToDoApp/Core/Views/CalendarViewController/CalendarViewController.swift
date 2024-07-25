@@ -8,7 +8,6 @@
 import CocoaLumberjackSwift
 import UIKit
 import SwiftUI
-import TodoItemsFileCache
 
 final class CalendarViewController: UIViewController {
     // MARK: Private properties
@@ -70,25 +69,30 @@ final class CalendarViewController: UIViewController {
 
     func fetchTodoItems() {
         Task {
+            fileCache.fetchTodoItems()
+
             do {
-                guard let items = try await DefaultNetworkingService.shared.getList() else {
+                guard let items = try await DefaultNetworkingService.shared.updateList(fileCache.todoItems) else {
                     return
                 }
-                todoItems = items.compactMap { $0.value }.sorted(by: {
-                    guard $0.deadline != nil || $1.deadline != nil else { return $0.text < $1.text }
-                    guard let first = $0.deadline else { return false }
-                    guard let second = $1.deadline else { return true }
-                    return first < second
-                })
-
-                await MainActor.run {
-                    fetchDates()
-                    groupTodoItemsWithDate()
-                    updateCollectionView()
-                    updateTableView()
-                }
+                todoItems = items.compactMap { $0.value }
             } catch {
+                todoItems = fileCache.todoItems.compactMap { $0.value }
                 DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+            }
+
+            todoItems.sort(by: {
+                guard $0.deadline != nil || $1.deadline != nil else { return $0.text < $1.text }
+                guard let first = $0.deadline else { return false }
+                guard let second = $1.deadline else { return true }
+                return first < second
+            })
+
+            await MainActor.run {
+                fetchDates()
+                groupTodoItemsWithDate()
+                updateCollectionView()
+                updateTableView()
             }
         }
     }
@@ -96,6 +100,9 @@ final class CalendarViewController: UIViewController {
     func updateTask(selectedTask: TodoItem?, isDone: Bool) {
         guard var newTask = selectedTask else { return }
         newTask.isDone = isDone
+        fileCache.addNewTask(newTask)
+        saveItems()
+
         Task {
             do {
                 try await DefaultNetworkingService.shared.updateItem(newTask)
@@ -103,13 +110,10 @@ final class CalendarViewController: UIViewController {
                 DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
             }
         }
-
-        saveItems()
     }
 
     func toggleIsDone(indexPath: IndexPath, isDone: Bool) {
         todoitemsDates[datesString[indexPath.section]]?[indexPath.row].isDone = isDone
-        saveItems()
     }
 
     func scrollTableView(to index: IndexPath) {
@@ -133,23 +137,12 @@ final class CalendarViewController: UIViewController {
 private extension CalendarViewController {
     func saveItems() {
         Task {
+            fileCache.saveTodoItems()
             do {
-                var dict = [String: TodoItem]()
-                for item in todoItems {
-                    dict[item.id] = item
-                }
-
-                guard let cache = try await DefaultNetworkingService.shared.updateList(dict) else {
-                    return
-                }
-
-                fileCache.todoItems = cache
-                fileCache.saveTodoItems()
-
+                try await DefaultNetworkingService.shared.updateList(fileCache.todoItems)
             } catch {
                 DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
             }
-
         }
     }
 
