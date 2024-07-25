@@ -8,7 +8,6 @@
 import CocoaLumberjackSwift
 import UIKit
 import SwiftUI
-import TodoItemsFileCache
 
 final class CalendarViewController: UIViewController {
     // MARK: Private properties

@@ -7,7 +7,6 @@
 
 import CocoaLumberjackSwift
 import SwiftUI
-import TodoItemsFileCache
 
 final class TodoListViewModel: ObservableObject {
     let fileCache = FileCache<TodoItem>()
