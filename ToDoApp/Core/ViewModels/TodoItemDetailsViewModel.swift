@@ -23,27 +23,30 @@ final class TodoItemDetailsViewModel: ObservableObject {
     init(task: TodoItem) {
         fileCache.fetchTodoItems()
         self.task = task
+        if task.deadline != nil { isDeadlineEnabled = true }
+
     }
 
     func saveTask() async throws {
         if fileCache.todoItems[task.id] != nil {
-            if task != fileCache.todoItems[task.id] {
-                try await DefaultNetworkingService.shared.updateItem(task)
-            }
+            try await DefaultNetworkingService.shared.updateItem(task)
         } else {
             try await DefaultNetworkingService.shared.addItem(task)
         }
-        fileCache.addNewTask(task)
-        fileCache.saveTodoItems()
 
         DDLogInfo("\(#fileID); \(#function)\nThe data is saved.")
     }
 
+    func saveToFileCache() {
+        fileCache.addNewTask(task)
+        fileCache.saveTodoItems()
+    }
+
     func deleteTask() async throws {
-        try await DefaultNetworkingService.shared.deleteItem(task.id)
         fileCache.deleteTask(id: task.id)
         fileCache.saveTodoItems()
 
+        try await DefaultNetworkingService.shared.deleteItem(task.id)
         DDLogInfo("\(#fileID); \(#function)\nDelete TodoItem with id:\(task.id).")
     }
 

@@ -18,11 +18,14 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     func setIsDirty() {
         isDirty = true
-        fileCache.fetchTodoItems()
     }
 
     func getList() async throws -> [String: TodoItem]? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
@@ -90,7 +93,11 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
     }
 
     func getItem(_ id: String) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
@@ -115,7 +122,11 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     @discardableResult
     func addItem(_ item: TodoItem) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
@@ -131,7 +142,11 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     @discardableResult
     func updateItem(_ item: TodoItem) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(item.id)") else {
             setIsDirty()
             DDLogError("\(#file); \(#function)\nbad URl")
@@ -147,7 +162,11 @@ final class DefaultNetworkingService: NetworkingServiceProtocol {
 
     @discardableResult
     func deleteItem(_ id: String) async throws -> TodoItem? {
-        if isDirty { try await updateList(fileCache.todoItems) }
+        if isDirty {
+            fileCache.fetchTodoItems()
+            try await updateList(fileCache.todoItems)
+        }
+
         guard let url = NetworkingConstants.baseURL?.appending(path: "/list/\(id)") else {
             DDLogError("\(#file); \(#function)\nbad URl")
             throw NetworkError.badURL

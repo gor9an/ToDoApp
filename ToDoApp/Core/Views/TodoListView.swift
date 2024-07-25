@@ -131,12 +131,10 @@ struct TodoListView: View {
                 Task {
                     do {
                         try await viewModel.performDelete(task: task)
-                        await MainActor.run {
-                            viewModel.deleteTask(task: task)
-                        }
                     } catch {
                         DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
                     }
+                    viewModel.deleteTask(task: task)
                 }
 
                 refreshData()
@@ -230,14 +228,14 @@ struct TodoListView: View {
         Task {
             do {
                 try await viewModel.refreshData()
-
-                await MainActor.run {
-                    viewModel.updateTasks()
-                    viewModel.sortTasksByDeadline()
-                    viewModel.saveToFileCache()
-                }
             } catch {
+                DefaultNetworkingService.shared.setIsDirty()
                 DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+            }
+            await MainActor.run {
+                viewModel.saveToFileCache()
+                viewModel.updateTasks()
+                viewModel.sortTasksByDeadline()
             }
         }
     }
