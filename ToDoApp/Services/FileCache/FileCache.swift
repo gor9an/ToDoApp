@@ -6,14 +6,41 @@
 //
 
 import Foundation
+import SwiftData
+import SwiftUI
 
-final class FileCache<T: FileCacheItem> {
-    init() { }
-
+final class FileCache<T: FileCacheItem>: ObservableObject {
     // MARK: Properties
+    var swiftDataItems: [SwiftDataItem] = []
+    @Published var todosSwiftData: [TodoItem] = []
+    @Published var error: Error?
+    @Published var showCompletedTasks = false
+    var filteredTasks: [TodoItem] {
+        todosSwiftData.filter { showCompletedTasks || !$0.isDone }
+    }
+
     var todoItems = [String: T]()
     let fileManager = FileManager.default
     var path: URL?
+    var modelContainer: ModelContainer?
+    var modelContext: ModelContext?
+
+    // MARK: Initialiser
+    @MainActor
+    init() {
+        do {
+            let container = try ModelContainer(for: SwiftDataItem.self)
+            self.modelContainer = container
+            self.modelContext = container.mainContext
+            modelContext?.autosaveEnabled = true
+
+            fetch()
+        } catch {
+            print(error)
+            print(error.localizedDescription)
+            self.error = error
+        }
+    }
 
     // MARK: Functions
     func addNewTask(
@@ -119,9 +146,10 @@ final class FileCache<T: FileCacheItem> {
             return
         }
     }
-
-    // MARK: Private Functions
-    private func createSourcePath() {
+}
+// MARK: Private Functions
+private extension FileCache {
+    func createSourcePath() {
         guard var documents = fileManager.urls(
             for: .documentDirectory,
             in: .userDomainMask
@@ -167,5 +195,79 @@ final class FileCache<T: FileCacheItem> {
         )
 
         return sourcePath
+    }
+}
+
+// MARK: SwiftData
+@MainActor
+extension FileCache {
+    func insert(_ todoItem: TodoItem) {
+        let swiftDataItem = SwiftDataItem.toSwiftDataItem(todoItem)
+        guard !todosSwiftData.contains(todoItem) else { return }
+        modelContext?.insert(swiftDataItem)
+        save()
+        fetch()
+    }
+
+    func fetch() {
+        guard let modelContext = modelContext else {
+            self.error = OtherErrors.nilContext
+            return
+        }
+
+        let todoDescriptor = FetchDescriptor<SwiftDataItem>(
+            predicate: nil,
+            sortBy: [
+                .init(\.text)
+            ]
+        )
+
+        do {
+            swiftDataItems = try modelContext.fetch(todoDescriptor)
+            todosSwiftData = swiftDataItems.map { SwiftDataItem.toTodoItem($0) }
+            sortTasksByDeadline()
+        } catch {
+            self.error = error
+        }
+    }
+
+    func delete(_ todoItem: TodoItem) {
+        if let item = swiftDataItems.first(where: { $0.id == todoItem.id}) {
+            modelContext?.delete(item)
+        }
+        save()
+        fetch()
+    }
+
+    func update(_ todoItem: TodoItem) {
+        let swiftDataItem = SwiftDataItem.toSwiftDataItem(todoItem)
+        if let duplicate = swiftDataItems.first(where: { $0.id == todoItem.id}) {
+            modelContext?.delete(duplicate)
+        }
+
+        modelContext?.insert(swiftDataItem)
+        save()
+        fetch()
+    }
+
+    private func save() {
+        guard let modelContext = modelContext else {
+            self.error = OtherErrors.nilContext
+            return
+        }
+        do {
+            try modelContext.save()
+        } catch {
+            print(error)
+            self.error = error
+        }
+    }
+
+    func sortTasksByDeadline() {
+        todosSwiftData.sort(by: {
+            guard let first = $0.deadline else { return false }
+            guard let second = $1.deadline else { return true }
+            return first < second
+        })
     }
 }

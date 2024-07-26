@@ -12,8 +12,8 @@ import SwiftUI
 final class CalendarViewController: UIViewController {
     // MARK: Private properties
     private var todoItems = [TodoItem]()
-    private let fileCache = FileCache<TodoItem>()
-
+    private let fileCache: FileCache<TodoItem>
+    private let networkingService: NetworkingServiceProtocol
     private lazy var collectionView = UICollectionView()
     private lazy var tableView = UITableView()
     private lazy var addTaskButton = UIButton()
@@ -27,6 +27,17 @@ final class CalendarViewController: UIViewController {
     var selected: TodoItem?
 
     private var formatter = TodoDateFormatter.calendar
+
+    // MARK: Initialisation
+    init(_ fileCache: FileCache<TodoItem>, _ networkingService: NetworkingServiceProtocol) {
+        self.fileCache = fileCache
+        self.networkingService = networkingService
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: Lifecycle
     override func viewDidLoad() {
@@ -69,17 +80,18 @@ final class CalendarViewController: UIViewController {
 
     func fetchTodoItems() {
         Task {
-            fileCache.fetchTodoItems()
-
-            do {
-                guard let items = try await DefaultNetworkingService.shared.updateList(fileCache.todoItems) else {
-                    return
-                }
-                todoItems = items.compactMap { $0.value }
-            } catch {
-                todoItems = fileCache.todoItems.compactMap { $0.value }
-                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-            }
+            todoItems = fileCache.todosSwiftData
+//            fileCache.fetchTodoItems()
+//
+//            do {
+//                guard let items = try await networkingService.updateList(fileCache.todoItems) else {
+//                    return
+//                }
+//                todoItems = items.compactMap { $0.value }
+//            } catch {
+//                todoItems = fileCache.todoItems.compactMap { $0.value }
+//                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//            }
 
             todoItems.sort(by: {
                 guard $0.deadline != nil || $1.deadline != nil else { return $0.text < $1.text }
@@ -100,16 +112,17 @@ final class CalendarViewController: UIViewController {
     func updateTask(selectedTask: TodoItem?, isDone: Bool) {
         guard var newTask = selectedTask else { return }
         newTask.isDone = isDone
+        fileCache.update(newTask)
         fileCache.addNewTask(newTask)
         saveItems()
-
-        Task {
-            do {
-                try await DefaultNetworkingService.shared.updateItem(newTask)
-            } catch {
-                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-            }
-        }
+//
+//        Task {
+//            do {
+//                try await networkingService.updateItem(newTask)
+//            } catch {
+//                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//            }
+//        }
     }
 
     func toggleIsDone(indexPath: IndexPath, isDone: Bool) {
@@ -138,11 +151,11 @@ private extension CalendarViewController {
     func saveItems() {
         Task {
             fileCache.saveTodoItems()
-            do {
-                try await DefaultNetworkingService.shared.updateList(fileCache.todoItems)
-            } catch {
-                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-            }
+//            do {
+//                try await networkingService.updateList(fileCache.todoItems)
+//            } catch {
+//                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//            }
         }
     }
 
@@ -288,7 +301,7 @@ private extension CalendarViewController {
 extension CalendarViewController {
     private func performTodoItemDetailsView() {
         let newTask = TodoItem(text: "", importance: .basic, deadline: nil, dateOfChange: nil, category: nil)
-        let todoItemDetailsView = TodoItemDetailsView(task: newTask)
+        let todoItemDetailsView = TodoItemDetailsView(fileCache, networkingService, newTask)
             .onDisappear {
                 self.fetchTodoItems()
                 self.updateTableView()

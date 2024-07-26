@@ -10,9 +10,9 @@ import Foundation
 import XCTest
 
 final class FileCacheTests: XCTestCase {
-    func testAddNewTask() {
+    @MainActor func testAddNewTask() {
         // given
-        let cache = FileCache()
+        let cache = FileCache<TodoItem>()
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
@@ -42,9 +42,9 @@ final class FileCacheTests: XCTestCase {
         XCTAssertTrue(cache.todoItems.count == 2)
     }
 
-    func testDelTask() {
+    @MainActor func testDelTask() {
         // given
-        let cache = FileCache()
+        let cache = FileCache<TodoItem>()
         let toDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
@@ -64,9 +64,9 @@ final class FileCacheTests: XCTestCase {
         XCTAssertTrue(cache.todoItems.count == 0)
     }
 
-    func testFileManager() throws {
+    @MainActor func testFileManager() throws {
         // given
-        let cache = FileCache()
+        let cache = FileCache<TodoItem>()
         let firstToDoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",

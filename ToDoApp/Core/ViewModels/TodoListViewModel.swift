@@ -9,9 +9,16 @@ import CocoaLumberjackSwift
 import SwiftUI
 
 final class TodoListViewModel: ObservableObject {
-    let fileCache = FileCache<TodoItem>()
+    let fileCache: FileCache<TodoItem>
+    let networkingService: NetworkingServiceProtocol
     @Published var tasks: [TodoItem] = []
     @Published var showCompletedTasks: Bool = false
+
+    // MARK: Initialiser
+    init(fileCache: FileCache<TodoItem>, networkingService: NetworkingServiceProtocol) {
+        self.fileCache = fileCache
+        self.networkingService = networkingService
+    }
 
     var newTask: TodoItem {
         let item = TodoItem(
@@ -36,7 +43,7 @@ final class TodoListViewModel: ObservableObject {
 
     func refreshData() async throws {
         fileCache.fetchTodoItems()
-        fileCache.todoItems = try await DefaultNetworkingService.shared.getList()
+        fileCache.todoItems = try await networkingService.getList()
         ?? fileCache.todoItems
 
         DDLogInfo("\(#fileID); \(#function)\nUpdated data.")
@@ -44,7 +51,7 @@ final class TodoListViewModel: ObservableObject {
 
     func save() async throws {
         fileCache.saveTodoItems()
-        fileCache.todoItems = try await DefaultNetworkingService.shared.updateList(fileCache.todoItems)
+        fileCache.todoItems = try await networkingService.updateList(fileCache.todoItems)
         ?? [String: TodoItem]()
 
         DDLogInfo("\(#fileID); \(#function)\nThe data is saved.")
@@ -57,7 +64,7 @@ final class TodoListViewModel: ObservableObject {
         fileCache.addNewTask(newTask)
         try await save()
 
-        try await DefaultNetworkingService.shared.updateItem(newTask)
+        try await networkingService.updateItem(newTask)
         try await refreshData()
     }
 
@@ -68,7 +75,7 @@ final class TodoListViewModel: ObservableObject {
     }
 
     func performDelete(task: TodoItem) async throws {
-        try await DefaultNetworkingService.shared.deleteItem(task.id)
+        try await networkingService.deleteItem(task.id)
 
         DDLogInfo("\(#fileID); \(#function)\nDelete TodoItem with id:\(task.id).")
     }

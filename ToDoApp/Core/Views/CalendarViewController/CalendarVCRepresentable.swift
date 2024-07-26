@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct CalendarVCRepresentable: UIViewControllerRepresentable {
+    private let fileCache: FileCache<TodoItem>
+    private let networkingService: NetworkingServiceProtocol
+
+    init(_ fileCache: FileCache<TodoItem>, _ networkingService: NetworkingServiceProtocol) {
+        self.fileCache = fileCache
+        self.networkingService = networkingService
+    }
     func makeUIViewController(context: Context) -> some UIViewController {
-        let viewController = CalendarViewController()
+        let viewController = CalendarViewController(fileCache, networkingService)
         let navigationViewController = UINavigationController(rootViewController: viewController)
         return navigationViewController
     }

@@ -12,7 +12,7 @@ import XCTest
 final class TodoItemTestsCsv: XCTestCase {
     func testConverToCsv() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
@@ -40,7 +40,7 @@ final class TodoItemTestsCsv: XCTestCase {
 
     func testConverToCsvWithOptionals() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
@@ -66,7 +66,7 @@ final class TodoItemTestsCsv: XCTestCase {
 
     func testParseCsv() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
@@ -111,7 +111,7 @@ final class TodoItemTestsCsv: XCTestCase {
 
     func testParseCsvWithOptionals() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,

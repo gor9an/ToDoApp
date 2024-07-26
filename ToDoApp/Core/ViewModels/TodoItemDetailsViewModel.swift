@@ -9,7 +9,8 @@ import CocoaLumberjackSwift
 import SwiftUI
 
 final class TodoItemDetailsViewModel: ObservableObject {
-    var fileCache = FileCache<TodoItem>()
+    private let fileCache: FileCache<TodoItem>
+    private let networkingService: NetworkingServiceProtocol
     @Published var task: TodoItem
     @Published var isDeadlineEnabled: Bool = false
     @Published var todoItemCategory: TodoItem.Category?
@@ -20,7 +21,10 @@ final class TodoItemDetailsViewModel: ObservableObject {
         .init(name: TodoItemCategory.otherName, hexColor: TodoItemCategory.otherHexColor)
     ]
 
-    init(task: TodoItem) {
+    // MARK: Initialaser
+    init(_ fileCache: FileCache<TodoItem>, _ networkingService: NetworkingServiceProtocol, _ task: TodoItem) {
+        self.fileCache = fileCache
+        self.networkingService = networkingService
         fileCache.fetchTodoItems()
         self.task = task
         if task.deadline != nil { isDeadlineEnabled = true }
@@ -28,25 +32,27 @@ final class TodoItemDetailsViewModel: ObservableObject {
     }
 
     func saveTask() async throws {
-        if fileCache.todoItems[task.id] != nil {
-            try await DefaultNetworkingService.shared.updateItem(task)
-        } else {
-            try await DefaultNetworkingService.shared.addItem(task)
-        }
+//        if fileCache.todoItems[task.id] != nil {
+//            try await networkingService.updateItem(task)
+//        } else {
+//            try await networkingService.addItem(task)
+//        }
 
         DDLogInfo("\(#fileID); \(#function)\nThe data is saved.")
     }
 
-    func saveToFileCache() {
+    @MainActor func saveToFileCache() {
         fileCache.addNewTask(task)
+        fileCache.update(task)
         fileCache.saveTodoItems()
     }
 
     func deleteTask() async throws {
         fileCache.deleteTask(id: task.id)
+        await fileCache.delete(task)
         fileCache.saveTodoItems()
 
-        try await DefaultNetworkingService.shared.deleteItem(task.id)
+//        try await networkingService.deleteItem(task.id)
         DDLogInfo("\(#fileID); \(#function)\nDelete TodoItem with id:\(task.id).")
     }
 

@@ -12,7 +12,7 @@ import XCTest
 final class TodoItemTestsJson: XCTestCase {
     func testCreatingJsonDictionary() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
@@ -68,12 +68,12 @@ final class TodoItemTestsJson: XCTestCase {
 
     func testCreatingJsonDictionaryWithOptionals() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let dateOfCreationItem = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreationItem,
@@ -123,7 +123,7 @@ final class TodoItemTestsJson: XCTestCase {
 
     func testParseJsonDictionary() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let someDate = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
@@ -166,12 +166,12 @@ final class TodoItemTestsJson: XCTestCase {
 
     func testParseJsonDictionaryWithOptionals() {
         // given
-        let formatter = TodoDateFormatter.standard
+        let formatter = TodoDateFormatter.json
         let dateOfCreation = formatter.date(from: "15-07-2003 00:00:00") ?? Date()
         let todoItem = TodoItem(
             id: UUID().uuidString,
             text: "text",
-            importance: .usual,
+            importance: .basic,
             deadline: nil,
             isDone: true,
             dateOfCreation: dateOfCreation,

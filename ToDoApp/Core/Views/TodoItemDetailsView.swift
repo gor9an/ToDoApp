@@ -6,6 +6,7 @@
 //
 
 import CocoaLumberjackSwift
+import SwiftData
 import SwiftUI
 
 struct TodoItemDetailsView: View {
@@ -20,8 +21,8 @@ struct TodoItemDetailsView: View {
     @Environment(\.verticalSizeClass)
     private var verticalSizeClass
 
-    init(task: TodoItem) {
-        self.viewModel = TodoItemDetailsViewModel(task: task)
+    init(_ fileCache: FileCache<TodoItem>, _ networkingService: NetworkingServiceProtocol, _ task: TodoItem) {
+        self.viewModel = TodoItemDetailsViewModel(fileCache, networkingService, task)
     }
 
     var body: some View {
@@ -274,8 +275,13 @@ struct TodoItemDetailsView: View {
 }
 
 #Preview {
-    TodoItemDetailsView(
-        task: TodoItem(
+    let fileCache = FileCache<TodoItem>()
+    let networkingService = DefaultNetworkingService(fileCache)
+
+    return TodoItemDetailsView(
+        fileCache,
+        networkingService,
+        TodoItem(
             text: "text",
             importance: .basic,
             deadline: Date(),
