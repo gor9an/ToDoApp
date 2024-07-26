@@ -44,16 +44,22 @@ struct TodoItem: Equatable, Identifiable, FileCacheItem {
     }
 
     // MARK: Importance enum
-    enum Importance: String, Equatable {
+    enum Importance: String, Equatable, Codable {
         case low
         case basic
         case important
     }
 
-    struct Category: Identifiable, Hashable {
-        let id = UUID().uuidString
+    struct Category: Identifiable, Hashable, Codable {
+        var id: String
         let name: String
         let hexColor: String?
+
+        init(id: String = UUID().uuidString, name: String, hexColor: String?) {
+            self.id = id
+            self.name = name
+            self.hexColor = hexColor
+        }
 
         enum PropertyName: String {
             case name

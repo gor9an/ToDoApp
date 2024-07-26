@@ -9,12 +9,16 @@ import CocoaLumberjackSwift
 import Foundation
 
 final class DefaultNetworkingService: NetworkingServiceProtocol {
-    static let shared = DefaultNetworkingService(); private init() { }
     private let urlSession = URLSession.shared
     private let httpStatusCodeSuccess = 200..<300
     private var revision: Int32 = 0
-    private let fileCache = FileCache<TodoItem>()
+    private let fileCache: FileCache<TodoItem>
     private var isDirty = false
+
+    // MARK: Initialaser
+    init(_ fileCache: FileCache<TodoItem>) {
+        self.fileCache = fileCache
+    }
 
     func setIsDirty() {
         isDirty = true

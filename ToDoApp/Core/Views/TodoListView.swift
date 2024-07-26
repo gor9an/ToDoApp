@@ -6,13 +6,29 @@
 //
 
 import CocoaLumberjackSwift
+import SwiftData
 import SwiftUI
 
 struct TodoListView: View {
-    @StateObject private var viewModel = TodoListViewModel()
+    @StateObject private var viewModel: TodoListViewModel
+    @StateObject private var fileCache: FileCache<TodoItem>
+
     @State private var showDetailsView = false
     @State private var showCalendarView = false
     @State private var selectedTask: TodoItem?
+    private let networkingService: NetworkingServiceProtocol
+
+    init() {
+        let fileCache = FileCache<TodoItem>()
+        let networkingService = DefaultNetworkingService(fileCache)
+
+        _viewModel = StateObject(
+            wrappedValue: TodoListViewModel(fileCache: fileCache, networkingService: networkingService)
+        )
+
+        self.networkingService = networkingService
+        _fileCache = StateObject(wrappedValue: fileCache)
+    }
 
     var body: some View {
         NavigationView {
@@ -39,14 +55,15 @@ struct TodoListView: View {
 
     private var todoHeaderView: some View {
         HStack {
-            Text("Выполнено — \(viewModel.tasks.filter { $0.isDone }.count)")
+            Text("Выполнено — \(fileCache.todosSwiftData.filter { $0.isDone }.count)")
                 .font(.system(size: 15))
                 .foregroundColor(.labelTertiary)
             Spacer()
             Button(action: {
-                viewModel.toggleShowCompletedTasks()
+//                viewModel.toggleShowCompletedTasks()
+                fileCache.showCompletedTasks.toggle()
             }, label: {
-                Text(viewModel.showCompletedTasks ? "Скрыть" : "Показать")
+                Text(/*viewModel*/fileCache.showCompletedTasks ? "Скрыть" : "Показать")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.blueCustom)
             })
@@ -62,7 +79,7 @@ struct TodoListView: View {
             Image(systemName: "calendar")
         })
         .fullScreenCover(isPresented: $showCalendarView, content: {
-            CalendarVCRepresentable()
+            CalendarVCRepresentable(fileCache, networkingService)
                 .edgesIgnoringSafeArea(.all)
                 .onDisappear(perform: {
                     refreshData()
@@ -73,7 +90,7 @@ struct TodoListView: View {
     private var todoList: some View {
         List {
             Section {
-                ForEach(viewModel.filteredTasks) { task in
+                ForEach(/*viewModel.filteredTasks*/fileCache.filteredTasks) { task in
                     todoListCell(with: task)
                 }
 
@@ -94,13 +111,13 @@ struct TodoListView: View {
         }
         .sheet(isPresented: $showDetailsView) {
             let newTask = viewModel.newTask
-            TodoItemDetailsView(task: newTask)
+            TodoItemDetailsView(fileCache, networkingService, newTask)
                 .onDisappear(perform: {
                     refreshData()
                 })
         }
         .sheet(item: $selectedTask) {task in
-            TodoItemDetailsView(task: task)
+            TodoItemDetailsView(fileCache, networkingService, task)
                 .onDisappear(perform: {
                     refreshData()
                 })
@@ -128,15 +145,16 @@ struct TodoListView: View {
         .padding(16)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(action: {
-                Task {
-                    do {
-                        try await viewModel.performDelete(task: task)
-                    } catch {
-                        DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-                    }
-                    viewModel.deleteTask(task: task)
-                }
-
+                fileCache.delete(task)
+//                Task {
+//                    do {
+//                        try await viewModel.performDelete(task: task)
+//                    } catch {
+//                        DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//                    }
+//                    viewModel.deleteTask(task: task)
+//                }
+//
                 refreshData()
             }, label: { Label("Удалить", systemImage: "trash") })
             .tint(.redCustom)
@@ -144,7 +162,7 @@ struct TodoListView: View {
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(action: { selectedTask = task }, label: { Label("Инфо", systemImage: "info.circle") })
             .sheet(item: $selectedTask, content: { task in
-                TodoItemDetailsView(task: task)
+                TodoItemDetailsView(fileCache, networkingService, task)
                     .onDisappear(perform: {
                         refreshData()
                     })
@@ -167,7 +185,7 @@ struct TodoListView: View {
         .frame(maxHeight: .infinity, alignment: .bottom)
         .sheet(isPresented: $showDetailsView) {
             let newTask = viewModel.newTask
-            TodoItemDetailsView(task: newTask)
+            TodoItemDetailsView(fileCache, networkingService, newTask)
                 .onDisappear(perform: {
                     refreshData()
                 })
@@ -189,18 +207,21 @@ struct TodoListView: View {
 
     private func leadingSwipeButton(_ task: TodoItem) -> some View {
         Button(action: {
-            viewModel.toggleTaskCompletion(task: task)
-            Task {
-                do {
-                    try await viewModel.saveItem(task)
-
-                    await MainActor.run {
-                        refreshData()
-                    }
-                } catch {
-                    DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-                }
-            }
+            var taskIsDoneToggled = task
+            taskIsDoneToggled.isDone.toggle()
+            fileCache.update(taskIsDoneToggled)
+//            viewModel.toggleTaskCompletion(task: task)
+//            Task {
+//                do {
+//                    try await viewModel.saveItem(task)
+//
+//                    await MainActor.run {
+            refreshData()
+//                    }
+//                } catch {
+//                    DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//                }
+//            }
         }, label: { Label("Выполнить", systemImage: "checkmark.circle.fill") })
         .tint(.greenCustom)
     }
@@ -225,19 +246,20 @@ struct TodoListView: View {
     }
 
     private func refreshData() {
-        Task {
-            do {
-                try await viewModel.refreshData()
-            } catch {
-                DefaultNetworkingService.shared.setIsDirty()
-                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
-            }
-            await MainActor.run {
-                viewModel.saveToFileCache()
-                viewModel.updateTasks()
-                viewModel.sortTasksByDeadline()
-            }
-        }
+        fileCache.fetch()
+//        Task {
+//            do {
+//                try await viewModel.refreshData()
+//            } catch {
+//                viewModel.networkingService.setIsDirty()
+//                DDLogError("\(#fileID); \(#function)\n\(error.localizedDescription).")
+//            }
+//            await MainActor.run {
+//                viewModel.saveToFileCache()
+//                viewModel.updateTasks()
+//                viewModel.sortTasksByDeadline()
+//            }
+//        }
     }
 }
 
