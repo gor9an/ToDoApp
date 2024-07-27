@@ -34,7 +34,7 @@ final class FileCache<T: FileCacheItem>: ObservableObject {
             self.modelContext = container.mainContext
             modelContext?.autosaveEnabled = true
 
-            fetch()
+            fetchSorted()
         } catch {
             print(error)
             print(error.localizedDescription)
@@ -206,13 +206,34 @@ extension FileCache {
         guard !todosSwiftData.contains(todoItem) else { return }
         modelContext?.insert(swiftDataItem)
         save()
-        fetch()
+        fetchSorted()
     }
 
-    func fetch() {
+    @discardableResult
+    func fetch() -> [TodoItem]? {
         guard let modelContext = modelContext else {
             self.error = OtherErrors.nilContext
-            return
+            return nil
+        }
+
+        let todoDescriptor = FetchDescriptor<SwiftDataItem>()
+
+        do {
+            swiftDataItems = try modelContext.fetch(todoDescriptor)
+            todosSwiftData = swiftDataItems.map { SwiftDataItem.toTodoItem($0) }
+            sortTasksByDeadline()
+        } catch {
+            self.error = error
+        }
+
+        return todosSwiftData
+    }
+
+    @discardableResult
+    func fetchSorted() -> [TodoItem]? {
+        guard let modelContext = modelContext else {
+            self.error = OtherErrors.nilContext
+            return nil
         }
 
         let todoDescriptor = FetchDescriptor<SwiftDataItem>(
@@ -229,6 +250,8 @@ extension FileCache {
         } catch {
             self.error = error
         }
+
+        return todosSwiftData
     }
 
     func delete(_ todoItem: TodoItem) {
@@ -236,7 +259,7 @@ extension FileCache {
             modelContext?.delete(item)
         }
         save()
-        fetch()
+        fetchSorted()
     }
 
     func update(_ todoItem: TodoItem) {
@@ -247,7 +270,7 @@ extension FileCache {
 
         modelContext?.insert(swiftDataItem)
         save()
-        fetch()
+        fetchSorted()
     }
 
     private func save() {

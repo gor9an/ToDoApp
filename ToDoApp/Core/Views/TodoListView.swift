@@ -246,7 +246,7 @@ struct TodoListView: View {
     }
 
     private func refreshData() {
-        fileCache.fetch()
+        fileCache.fetchSorted()
 //        Task {
 //            do {
 //                try await viewModel.refreshData()
