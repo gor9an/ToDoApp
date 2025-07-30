@@ -15,7 +15,7 @@
 - **UIKit**: Для сложных кастомных компонентов
 - **SwiftData**: Персистентное хранилище данных
 - **MVVM**: Архитектура приложения
-- **FileCache**: Система кэширования файлов импортируется из [TodoItemsFileCache](https://github.com/gor9an/TodoItemsFileCache)
+- **FileCache**: Система кэширования импортируется из [TodoItemsFileCache](https://github.com/gor9an/TodoItemsFileCache)
 
 [![Swift](https://img.shields.io/badge/Swift-FA7343?logo=swift)](https://swift.org/)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-1F8EEA?logo=swift)](https://developer.apple.com/xcode/swiftui/)
