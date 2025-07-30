@@ -26,3 +26,4 @@
 1. Клонируйте репозиторий:
 ```bash
 git clone https://github.com/gor9an/ToDoApp.git
+cd ToDoApp
